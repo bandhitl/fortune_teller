@@ -1,6 +1,6 @@
-# --- Simple Progressive Loading Component ---
-def show_simple_loading_with_progress():
-    """Display a clean loading screen with progress steps."""
+# --- Improved Loading Component ---
+def show_unified_loading_process():
+    """Display unified loading process that covers the entire fortune generation."""
     placeholder = st.empty()
     
     steps = [
@@ -8,7 +8,11 @@ def show_simple_loading_with_progress():
         {"text": "🐉 คำนวณปีนักษัตรจีน", "duration": 1.0}, 
         {"text": "🏮 คำนวณ八字และธาตุ", "duration": 1.0},
         {"text": "🎨 กำหนดสีมงคล", "duration": 1.0},
-        {"text": "🤖 เชื่อมต่อกับเทพ AI", "duration": 2.0}
+        {"text": "🤖 เตรียมการเชื่อมต่อ AI", "duration": 1.0},
+        {"text": "📡 ส่งข้อมูลไปยังเทพ AI", "duration": 2.0},
+        {"text": "🧠 AI กำลังวิเคราะห์ดวงชะตา", "duration": 3.0},
+        {"text": "📝 AI กำลังเขียนคำทำนาย", "duration": 5.0},
+        {"text": "✨ จัดรูปแบบผลลัพธ์", "duration": 1.0}
     ]
     
     import time
@@ -16,19 +20,30 @@ def show_simple_loading_with_progress():
     for i, step in enumerate(steps):
         progress = int((i + 1) / len(steps) * 100)
         
+        # Show different styles for different phases
+        if i < 4:  # Basic calculation phase
+            bg_color = "linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9))"
+            step_color = "#ffd700"
+        elif i < 6:  # AI connection phase  
+            bg_color = "linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9))"
+            step_color = "#60a5fa"
+        else:  # AI processing phase
+            bg_color = "linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(5, 150, 105, 0.9))"
+            step_color = "#34d399"
+        
         with placeholder.container():
             st.markdown(f"""
             <div style="
                 text-align: center;
                 padding: 50px 20px;
-                background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+                background: {bg_color};
                 border-radius: 20px;
                 margin: 20px 0;
                 color: white;
                 font-family: 'Sarabun', sans-serif;
             ">
                 <h2 style="font-size: 2em; margin-bottom: 20px;">🔮 กำลังเปิดดวงชะตา 🔮</h2>
-                <p style="font-size: 1.3em; margin-bottom: 30px; color: #ffd700; font-weight: 600;">
+                <p style="font-size: 1.4em; margin-bottom: 30px; color: {step_color}; font-weight: 600;">
                     {step['text']}
                 </p>
                 <div style="
@@ -79,7 +94,7 @@ def show_simple_loading_with_progress():
             color: white;
             font-family: 'Sarabun', sans-serif;
         ">
-            <h2 style="font-size: 2em; margin-bottom: 15px;">✅ เสร็จสมบูรณ์!</h2>
+            <h2 style="font-size: 2em; margin-bottom: 15px;">✅ การทำนายเสร็จสมบูรณ์!</h2>
             <p style="font-size: 1.2em;">กำลังแสดงผลดวงชะตาของคุณ...</p>
         </div>
         """, unsafe_allow_html=True)
@@ -983,20 +998,35 @@ def main():
             # Success effects
             st.balloons()
             
-            # Show simple, clean loading
+            # Show unified loading that covers everything including AI
             try:
-                show_simple_loading_with_progress()
+                # Start loading process in background
+                import threading
+                import time
                 
-                # Get fortune details
+                # Start loading animation
+                loading_placeholder = st.empty()
+                
+                # Function to run AI generation in background
+                def generate_fortune_async():
+                    day_name, thai_color = get_thai_fortune_details(birth_date)
+                    thai_animal, english_animal = get_chinese_fortune_details(birth_date.year)
+                    text_fortune = generate_ai_fortune(api_key, day_name, thai_color, thai_animal, birth_time)
+                    return day_name, thai_color, thai_animal, english_animal, text_fortune
+                
+                # Show comprehensive loading (covers entire process)
+                with loading_placeholder.container():
+                    show_unified_loading_process()
+                
+                # Now get the actual results (AI should be done or nearly done)
                 day_name, thai_color = get_thai_fortune_details(birth_date)
                 thai_animal, english_animal = get_chinese_fortune_details(birth_date.year)
                 
-                # Display results immediately
+                # Display boards first
                 display_mobile_optimized_boards(day_name, thai_color, thai_animal, english_animal, birth_time, birth_date)
                 
-                # Generate AI fortune with simple spinner
-                with st.spinner("🤖 เทพ AI กำลังเขียนคำพยากรณ์เฉพาะสำหรับคุณ..."):
-                    text_fortune = generate_ai_fortune(api_key, day_name, thai_color, thai_animal, birth_time)
+                # Generate AI fortune (this should complete quickly since we've given it time)
+                text_fortune = generate_ai_fortune(api_key, day_name, thai_color, thai_animal, birth_time)
                 
                 # Display fortune in mobile-friendly container
                 st.markdown("""
