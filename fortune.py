@@ -67,22 +67,35 @@ def generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time):
         return "Error: OpenAI API key is missing. Please provide your API key to generate a fortune."
     
     try:
-        # Conditionally initialize the client based on proxy environment variables
-        # This is a robust way to handle environments like Render that may inject proxy settings.
-        proxy_url = os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")
-        
-        if proxy_url:
-            # If a proxy is set in the environment, create an httpx client.
-            # Support both the older `proxies` parameter and the newer `proxy`
-            # parameter used by httpx.
-            try:
-                http_client = httpx.Client(proxy=proxy_url)
-            except TypeError:
-                http_client = httpx.Client(proxies=proxy_url)
-            client = OpenAI(api_key=api_key, http_client=http_client)
-        else:
-            # If no proxy is set, initialize the client normally
-            client = OpenAI(api_key=api_key)
+        # Conditionally initialize the HTTP client based on proxy environment
+        # variables. Some platforms (like Render) set lowercase variables such as
+        # `https_proxy`, which can cause issues if not explicitly handled.
+        proxy_url = (
+            os.environ.get("HTTPS_PROXY")
+            or os.environ.get("https_proxy")
+            or os.environ.get("HTTP_PROXY")
+            or os.environ.get("http_proxy")
+            or os.environ.get("ALL_PROXY")
+            or os.environ.get("all_proxy")
+        )
+
+        # Always create our own httpx client so we can disable the automatic
+        # proxy handling (trust_env=False) and avoid conflicts with httpx
+        # versions that expect either `proxy` or `proxies`.
+        try:
+            if proxy_url:
+                http_client = httpx.Client(proxy=proxy_url, trust_env=False)
+            else:
+                http_client = httpx.Client(trust_env=False)
+        except TypeError:
+            # Fall back to the older parameter name if this version of httpx
+            # does not accept `proxy`.
+            if proxy_url:
+                http_client = httpx.Client(proxies=proxy_url, trust_env=False)
+            else:
+                http_client = httpx.Client(trust_env=False)
+
+        client = OpenAI(api_key=api_key, http_client=http_client)
 
 
         # Construct a detailed prompt for the AI
