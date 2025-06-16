@@ -242,7 +242,7 @@ col1, col2 = st.columns(2)
 with col1:
     birth_date = st.date_input(
         "📅 วัน/เดือน/ปีเกิด:", 
-        datetime.date(1990, 1, 1),  # Fixed generic date
+        datetime.date(1990, 1, 1),
         min_value=datetime.date(1950, 1, 1), 
         max_value=datetime.date.today()
     )
@@ -250,7 +250,7 @@ with col1:
 with col2:
     birth_time = st.time_input(
         "🕐 เวลาเกิด:", 
-        datetime.time(12, 0)  # Fixed noon time
+        datetime.time(12, 0)
     )950, 1, 1), 
         max_value=datetime.date.today()
     )
