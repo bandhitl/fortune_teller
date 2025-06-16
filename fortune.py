@@ -1,10 +1,10 @@
 # fortune.py
 # This file contains the core logic for calculating Thai and Chinese fortunes
-# and generating a detailed AI-powered reading using a stable version of the OpenAI library.
+# and generating a detailed AI-powered reading and infographic in Thai.
 
 import datetime
 import os
-import openai # Import the openai library (older version syntax)
+import openai # Import the openai library (older version syntax v0.28.0)
 
 def get_thai_fortune_details(birth_date):
     """
@@ -41,67 +41,80 @@ def get_chinese_fortune_details(year):
     Returns:
         str: The name of the zodiac animal.
     """
-    zodiac_animals = [
-        "Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake",
-        "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"
-    ]
+    zodiac_animals = {
+        "Rat": "ชวด (หนู)", "Ox": "ฉลู (วัว)", "Tiger": "ขาล (เสือ)", 
+        "Rabbit": "เถาะ (กระต่าย)", "Dragon": "มะโรง (มังกร)", "Snake": "มะเส็ง (งูเล็ก)",
+        "Horse": "มะเมีย (ม้า)", "Goat": "มะแม (แพะ)", "Monkey": "วอก (ลิง)",
+        "Rooster": "ระกา (ไก่)", "Dog": "จอ (สุนัข)", "Pig": "กุน (หมู)"
+    }
+    english_zodiacs = ["Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake", "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"]
     index = (year - 4) % 12
-    return zodiac_animals[index]
+    animal_key = english_zodiacs[index]
+    return zodiac_animals[animal_key], animal_key # Return both Thai and English names
 
-def generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time):
+def generate_ai_fortune_and_image(api_key, day_name, thai_color, thai_animal, english_animal, birth_time):
     """
-    Generates a detailed fortune using the v0.28.0 OpenAI Python library.
-    This syntax is different from newer versions and is more resilient to certain
-    server environment issues.
+    Generates a detailed fortune in Thai and a visual infographic.
 
     Args:
         api_key (str): The user's OpenAI API key.
-        day_name (str): The day of the week of birth.
-        thai_color (str): The lucky color associated with the day.
-        animal_name (str): The Chinese zodiac animal.
+        day_name (str): The day of the week of birth (English).
+        thai_color (str): The lucky color (English).
+        thai_animal (str): The Chinese zodiac animal (Thai).
+        english_animal (str): The Chinese zodiac animal (English).
         birth_time (datetime.time): The user's time of birth.
 
     Returns:
-        str: A detailed, AI-generated fortune, or an error message.
+        tuple: (A detailed, AI-generated fortune in Thai, URL for the infographic)
     """
     if not api_key:
-        return "Error: OpenAI API key is missing. Please provide your API key to generate a fortune."
+        return "Error: OpenAI API key is missing.", None
     
     try:
-        # --- STRATEGY 6: STABLE LIBRARY VERSION ---
-        # Set the API key directly on the openai module (this is the old syntax)
+        # --- Using Stable Library Version (v0.28.0) ---
         openai.api_key = api_key
 
-        prompt = (
-            f"Act as an expert astrologer combining Thai and Chinese traditions. "
-            f"A person was born on a {day_name} at {birth_time.strftime('%H:%M')}. Their lucky color is {thai_color} and their Chinese Zodiac animal is the {animal_name}. "
-            f"Please provide a detailed and insightful fortune for them, taking the specific time of birth into account for a more precise reading. Cover the following sections:\n\n"
-            f"1.  **Personality Insight:** A deep dive into their character, blending traits from their birth day, time, and zodiac animal.\n"
-            f"2.  **Career & Path:** Guidance on suitable career paths and their professional strengths.\n"
-            f"3.  **Love & Relationships:** Advice on their approach to love and compatibility.\n"
-            f"4.  **Health & Wellness:** Astrological insights into their well-being.\n"
-            f"5.  **Lucky Charm for the Year:** Suggest a simple, symbolic lucky charm.\n\n"
-            f"Write this in a warm, encouraging, and mystical tone. Use markdown for formatting."
+        # --- 1. Generate Fortune Text in Thai ---
+        text_prompt = (
+            f"ทำตัวเป็นนักโหราศาสตร์ผู้เชี่ยวชาญที่ผสมผสานศาสตร์ไทยและจีนเข้าด้วยกัน "
+            f"มีคนเกิดวัน {day_name} เวลา {birth_time.strftime('%H:%M')} สีนำโชคของเขาคือ {thai_color} และปีนักษัตรจีนของเขาคือ {thai_animal}. "
+            f"โปรดทำนายดวงชะตาอย่างละเอียดและลึกซึ้งให้แก่บุคคลนี้ โดยครอบคลุมหัวข้อต่อไปนี้:\n\n"
+            f"1.  **ภาพรวมและลักษณะนิสัย:** เจาะลึกถึงบุคลิกภาพ โดยผสมผสานลักษณะจากวันเกิด เวลาเกิด และปีนักษัตร\n"
+            f"2.  **การงานและอาชีพ:** คำแนะนำเกี่ยวกับเส้นทางอาชีพที่เหมาะสมและจุดแข็งในการทำงาน\n"
+            f"3.  **ความรักและความสัมพันธ์:** คำแนะนำเกี่ยวกับความรักและความเข้ากันได้กับผู้อื่น\n"
+            f"4.  **สุขภาพ:** ข้อควรระวังและคำแนะนำด้านสุขภาพตามหลักโหราศาสตร์\n"
+            f"5.  **วัตถุมงคลเสริมดวงประจำปี:** แนะนำวัตถุมงคลที่เรียบง่ายและเป็นสัญลักษณ์สำหรับปีนี้\n\n"
+            f"**คำสั่งสำคัญ: โปรดเขียนคำตอบทั้งหมดเป็นภาษาไทยเท่านั้น** ใช้น้ำเสียงที่อบอุ่น ให้กำลังใจ และลึกซึ้ง"
         )
 
-        # Use the older `openai.ChatCompletion.create` method
         chat_completion = openai.ChatCompletion.create(
             model="gpt-4-turbo",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
+            messages=[{"role": "user", "content": text_prompt}]
+        )
+        text_fortune = chat_completion['choices'][0]['message']['content']
+
+        # --- 2. Generate Infographic Image ---
+        image_prompt = (
+            f"Create a beautiful, mystical infographic for a Thai astrology reading. The subject's Chinese Zodiac animal is the {english_animal}. "
+            f"Their lucky color is {thai_color}. The style should be elegant and modern with a magical feel, incorporating subtle Thai design motifs. "
+            f"Visually feature the {english_animal} as the centerpiece. Use a color palette dominated by {thai_color}. "
+            f"Do not include any text. Focus on abstract symbols representing luck, career, and love. High-resolution digital art."
         )
         
-        # The response structure is also slightly different
-        return chat_completion['choices'][0]['message']['content']
+        image_response = openai.Image.create(
+            prompt=image_prompt,
+            n=1,
+            size="1024x1024",
+            model="dall-e-3" # Explicitly use DALL-E 3
+        )
+        image_url = image_response['data'][0]['url']
+        
+        return text_fortune, image_url
 
     except openai.error.AuthenticationError as e:
-        return f"Authentication Error: The OpenAI API key is invalid or has expired. Please check your key. Details: {e}"
+        return f"Authentication Error: The OpenAI API key is invalid or has expired. Please check your key. Details: {e}", None
     except openai.error.APIError as e:
-        return f"The AI oracle's API returned an error: {e}"
+        return f"The AI oracle's API returned an error: {e}", None
     except Exception as e:
-        # Provide a more detailed error message for easier debugging
-        return f"An unexpected error occurred: {type(e).__name__} - {e}"
+        return f"An unexpected error occurred: {type(e).__name__} - {e}", None
+
