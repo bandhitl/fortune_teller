@@ -1,116 +1,96 @@
 # fortune.py
-# This file contains the core logic for calculating Thai and Chinese fortunes.
+# This file contains the core logic for calculating Thai and Chinese fortunes
+# and generating a detailed AI-powered reading.
 
 import datetime
+from openai import OpenAI
 
-
-def get_thai_fortune(birth_date):
+def get_thai_fortune_details(birth_date):
     """
-    Calculates the Thai fortune based on the day of the week of birth.
+    Determines the Thai day-of-birth details.
 
     Args:
         birth_date (datetime.date): The user's date of birth.
 
     Returns:
-        tuple: A tuple containing the day name, color, and description.
+        tuple: A tuple containing the day name and its associated color.
     """
-    # Determine the day of the week (Monday is 0 and Sunday is 6)
     day_index = birth_date.weekday()
-    days = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-    ]
+    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     day_name = days[day_index]
 
-    thai_fortunes = {
-        "Sunday": (
-            "Red",
-            "You are respectable, wise, and beloved by friends and family.",
-        ),
-        "Monday": ("Yellow", "You have a good memory, are serious, and enjoy travel."),
-        "Tuesday": ("Pink", "You are brave, active, and have a broad mind."),
-        "Wednesday": (
-            "Green",
-            "You are ambitious, fun-loving, and have good social skills.",
-        ),
-        "Thursday": ("Orange", "You are good-hearted, honest, and calm."),
-        "Friday": (
-            "Blue",
-            "You are ambitious, fun-loving, and have a cheerful disposition.",
-        ),
-        "Saturday": ("Purple", "You are logical, confident, and a bit of a recluse."),
+    thai_colors = {
+        "Sunday": "Red",
+        "Monday": "Yellow",
+        "Tuesday": "Pink",
+        "Wednesday": "Green",
+        "Thursday": "Orange",
+        "Friday": "Blue",
+        "Saturday": "Purple"
     }
+    return day_name, thai_colors[day_name]
 
-    color, description = thai_fortunes[day_name]
-    return day_name, color, description
-
-
-def get_chinese_fortune(year):
+def get_chinese_fortune_details(year):
     """
-    Calculates the Chinese Zodiac animal based on the year of birth.
+    Determines the Chinese Zodiac animal.
 
     Args:
         year (int): The user's year of birth.
 
     Returns:
-        tuple: A tuple containing the zodiac animal name and its description.
+        str: The name of the zodiac animal.
     """
     zodiac_animals = [
-        ("Rat", "Intelligent, adaptable, quick-witted."),
-        ("Ox", "Loyal, reliable, hardworking."),
-        ("Tiger", "Brave, confident, competitive."),
-        ("Rabbit", "Quiet, elegant, kind."),
-        ("Dragon", "Confident, intelligent, enthusiastic."),
-        ("Snake", "Enigmatic, intelligent, wise."),
-        ("Horse", "Energetic, independent, impatient."),
-        ("Goat", "Calm, gentle, creative."),
-        ("Monkey", "Sharp, smart, curious."),
-        ("Rooster", "Observant, hardworking, courageous."),
-        ("Dog", "Loyal, honest, responsible."),
-        ("Pig", "Compassionate, generous, diligent."),
+        "Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake",
+        "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"
     ]
-
-    # The formula calculates the index for the zodiac_animals list
     index = (year - 4) % 12
-    animal, description = zodiac_animals[index]
-    return animal, description
+    return zodiac_animals[index]
 
-
-def main():
+def generate_ai_fortune(api_key, day_name, thai_color, animal_name):
     """
-    Main function to run the command-line version of the fortune teller.
+    Generates a detailed fortune using the OpenAI API.
+
+    Args:
+        api_key (str): The user's OpenAI API key.
+        day_name (str): The day of the week of birth.
+        thai_color (str): The lucky color associated with the day.
+        animal_name (str): The Chinese zodiac animal.
+
+    Returns:
+        str: A detailed, AI-generated fortune, or an error message.
     """
-    print("Welcome to the Thai-Chinese Fortune Teller!")
+    if not api_key:
+        return "Error: OpenAI API key is missing. Please provide your API key to generate a fortune."
+    
+    try:
+        # Initialize the OpenAI client with the provided API key
+        client = OpenAI(api_key=api_key)
 
-    while True:
-        date_str = input("Please enter your date of birth (DD/MM/YYYY): ")
-        try:
-            # Attempt to parse the input string into a datetime object
-            day, month, year = map(int, date_str.split("/"))
-            birth_date = datetime.date(year, month, day)
-            break  # Exit loop if date is valid
-        except ValueError:
-            print("Invalid date format. Please use DD/MM/YYYY.")
+        # Construct a detailed prompt for the AI
+        prompt = (
+            f"Act as an expert astrologer combining Thai and Chinese traditions. "
+            f"A person was born on a {day_name} (lucky color: {thai_color}) and their Chinese Zodiac animal is the {animal_name}. "
+            f"Please provide a detailed and insightful fortune for them. Cover the following sections:\n\n"
+            f"1.  **Personality Insight:** A deep dive into their character, blending traits from both their birth day and zodiac animal.\n"
+            f"2.  **Career & Path:** Guidance on suitable career paths and their professional strengths.\n"
+            f"3.  **Love & Relationships:** Advice on their approach to love and compatibility.\n"
+            f"4.  **Lucky Charm for the Year:** Suggest a simple, symbolic lucky charm.\n\n"
+            f"Write this in a warm, encouraging, and mystical tone. Use markdown for formatting."
+        )
 
-    print("\n--- Your Fortune ---")
+        # Make the API call
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+            model="gpt-3.5-turbo",
+        )
+        return chat_completion.choices[0].message.content
+    except Exception as e:
+        # Handle potential errors like invalid API key, network issues, etc.
+        return f"An error occurred while generating your fortune: {e}"
 
-    # Get and display Thai fortune
-    day_name, color, thai_desc = get_thai_fortune(birth_date)
-    print("\n[THAI]")
-    print(f"You were born on a {day_name}.")
-    print(f"Your color is {color}, and {thai_desc}")
-
-    # Get and display Chinese fortune
-    animal, chinese_desc = get_chinese_fortune(birth_date.year)
-    print("\n[CHINESE]")
-    print(f"Your Chinese Zodiac animal is the {animal}.")
-    print(f"You are known for being {chinese_desc}")
-
-
-if __name__ == "__main__":
-    main()
