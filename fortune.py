@@ -1,6 +1,7 @@
 # fortune.py
 # This file contains the core logic for calculating Thai and Chinese fortunes
-# and generating a detailed AI-powered reading and a faster infographic in Thai.
+# and generating a detailed AI-powered reading in Thai.
+# Image generation has been removed for better performance.
 
 import datetime
 import os
@@ -52,29 +53,28 @@ def get_chinese_fortune_details(year):
     animal_key = english_zodiacs[index]
     return zodiac_animals[animal_key], animal_key # Return both Thai and English names
 
-def generate_ai_fortune_and_image(api_key, day_name, thai_color, thai_animal, english_animal, birth_time):
+def generate_ai_fortune(api_key, day_name, thai_color, thai_animal, birth_time):
     """
-    Generates a detailed fortune in Thai and a visual infographic.
+    Generates a detailed fortune in Thai.
 
     Args:
         api_key (str): The user's OpenAI API key.
         day_name (str): The day of the week of birth (English).
         thai_color (str): The lucky color (English).
         thai_animal (str): The Chinese zodiac animal (Thai).
-        english_animal (str): The Chinese zodiac animal (English).
         birth_time (datetime.time): The user's time of birth.
 
     Returns:
-        tuple: (A detailed, AI-generated fortune in Thai, URL for the infographic)
+        str: A detailed, AI-generated fortune in Thai, or an error message.
     """
     if not api_key:
-        return "Error: OpenAI API key is missing.", None
+        return "Error: OpenAI API key is missing."
     
     try:
         # --- Using Stable Library Version (v0.28.0) ---
         openai.api_key = api_key
 
-        # --- 1. Generate Fortune Text in Thai ---
+        # --- Generate Fortune Text in Thai ---
         text_prompt = (
             f"จงสวมบทบาทเป็น 'โหราจารย์' ผู้มีภูมิความรู้ลึกซึ้งในศาสตร์แห่งดวงดาว ทำการผูกดวงและอ่านชะตาบุคคลผู้เกิดในวัน {day_name} เวลา {birth_time.strftime('%H:%M')} ซึ่งถือกำเนิดในปีนักษัตร {thai_animal} โดยมีสีมงคลคือ {thai_color}.\n\n"
             f"**คำสั่งในการพยากรณ์:**\n"
@@ -88,36 +88,20 @@ def generate_ai_fortune_and_image(api_key, day_name, thai_color, thai_animal, en
             f"จงรจนาคำทำนายทั้งหมดเป็น **'ภาษาไทย'** ด้วยลีลาของนักปราชญ์ผู้สุขุม ลึกซึ้ง และเปี่ยมด้วยเมตตา เพื่อให้ผู้รับคำทำนายได้ทั้งสติปัญญาและกำลังใจในการดำเนินชีวิต"
         )
 
-
         chat_completion = openai.ChatCompletion.create(
-            model="gpt-4-turbo",
-            messages=[{"role": "user", "content": text_prompt}]
+            # Using a highly stable model to avoid server errors
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": text_prompt}],
+            request_timeout=60 # Set a timeout for resilience
         )
         text_fortune = chat_completion['choices'][0]['message']['content']
-
-        # --- 2. Generate Infographic Image using a faster model ---
-        image_prompt = (
-            f"An artistic and symbolic image reflecting the future of a person for the next 6 months. "
-            f"Their Chinese zodiac is the {english_animal} and their lucky color is {thai_color}. "
-            f"Create a beautiful, abstract, and hopeful image. "
-            f"The style should be a dreamy, digital painting. Do not include any text. "
-            f"Focus on symbols of growth, opportunity, and positive energy, subtly incorporating the animal and the color."
-        )
         
-        image_response = openai.Image.create(
-            prompt=image_prompt,
-            n=1,
-            size="1024x1024",
-            model="dall-e-2" # Using the faster DALL-E 2 model
-        )
-        image_url = image_response['data'][0]['url']
-        
-        return text_fortune, image_url
+        return text_fortune
 
     except openai.error.AuthenticationError as e:
-        return f"Authentication Error: The OpenAI API key is invalid or has expired. Please check your key. Details: {e}", None
+        return f"Authentication Error: The OpenAI API key is invalid or has expired. Please check your key. Details: {e}"
     except openai.error.APIError as e:
-        return f"The AI oracle's API returned an error: {e}", None
+        return f"The AI oracle's API returned an error: {e}"
     except Exception as e:
-        return f"An unexpected error occurred: {type(e).__name__} - {e}", None
+        return f"An unexpected error occurred: {type(e).__name__} - {e}"
 
