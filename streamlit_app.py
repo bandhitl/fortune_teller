@@ -22,14 +22,14 @@ def show_optimized_loading_process():
         
         # Show different styles for different phases
         if i < 4:  # Basic calculation phase
-            bg_color = "linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9))"
-            step_color = "#ffd700"
+            bg_color = "linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(153, 27, 27, 0.9))"
+            step_color = "#fbbf24"
         elif i < 6:  # AI connection phase  
-            bg_color = "linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9))"
-            step_color = "#60a5fa"
+            bg_color = "linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(185, 28, 28, 0.9))"
+            step_color = "#fcd34d"
         else:  # AI processing phase
-            bg_color = "linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(5, 150, 105, 0.9))"
-            step_color = "#34d399"
+            bg_color = "linear-gradient(135deg, rgba(127, 29, 29, 0.9), rgba(87, 13, 13, 0.9))"
+            step_color = "#fed7aa"
         
         with placeholder.container():
             st.markdown(f"""
@@ -58,7 +58,7 @@ def show_optimized_loading_process():
                     <div style="
                         width: {progress}%;
                         height: 100%;
-                        background: linear-gradient(90deg, #ffd700, #ffed4e);
+                        background: linear-gradient(90deg, #fbbf24, #f59e0b);
                         border-radius: 10px;
                         transition: width 0.5s ease;
                     "></div>
@@ -105,19 +105,19 @@ def load_mobile_responsive_css():
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Kanit:wght@300;400;600;700&display=swap');
     
-    /* Global Reset and Mobile Optimization */
+    /* Global Styling with Red Theme */
     * {
         box-sizing: border-box;
     }
     
     .main {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
         padding: 10px;
         min-height: 100vh;
     }
     
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
     }
     
     /* Hide sidebar toggle on mobile for cleaner look */
@@ -130,7 +130,7 @@ def load_mobile_responsive_css():
         }
     }
     
-    /* Enhanced Header - Mobile Responsive */
+    /* Enhanced Header - Red Theme */
     .main-header {
         text-align: center;
         background: rgba(255, 255, 255, 0.15);
@@ -139,7 +139,7 @@ def load_mobile_responsive_css():
         padding: 25px 15px;
         margin-bottom: 20px;
         border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 40px rgba(220, 38, 38, 0.3);
     }
     
     .main-header h1 {
@@ -159,16 +159,16 @@ def load_mobile_responsive_css():
         margin: 0;
     }
     
-    /* Mobile-First Board Design */
+    /* Mobile-First Board Design with Red/Gold Theme */
     .board {
-        background: linear-gradient(145deg, #fdf6e3, #f7e98e);
+        background: linear-gradient(145deg, #fef3c7, #fbbf24);
         border: none;
         border-radius: 20px;
         padding: 20px 15px;
         text-align: center;
         font-family: 'Sarabun', sans-serif;
         box-shadow: 
-            0 15px 35px rgba(0,0,0,0.1),
+            0 15px 35px rgba(220, 38, 38, 0.2),
             inset 0 1px 0 rgba(255,255,255,0.6);
         margin: 15px 0;
         position: relative;
@@ -183,11 +183,11 @@ def load_mobile_responsive_css():
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+        background: linear-gradient(90deg, #dc2626, #ef4444, #dc2626);
     }
     
     .board h3 {
-        color: #8b4513;
+        color: #991b1b;
         margin-bottom: 20px;
         font-family: 'Kanit', sans-serif;
         font-size: clamp(1.3em, 4vw, 2.2em);
@@ -218,13 +218,13 @@ def load_mobile_responsive_css():
         }
     }
     
-    /* Info Items - Touch Friendly */
+    /* Info Items - Touch Friendly with Red Theme */
     .info-item {
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.9);
         padding: 18px 12px;
         border-radius: 15px;
         transition: all 0.3s ease;
-        border: 1px solid rgba(212, 175, 55, 0.3);
+        border: 1px solid rgba(220, 38, 38, 0.3);
         min-height: 100px;
         display: flex;
         flex-direction: column;
@@ -234,14 +234,15 @@ def load_mobile_responsive_css():
     
     .info-item:hover, .info-item:active {
         transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 25px rgba(220, 38, 38, 0.2);
         background: rgba(255, 255, 255, 0.95);
+        border-color: #dc2626;
     }
     
     .info-item .label {
         font-size: clamp(0.8em, 2.5vw, 1em);
         margin-bottom: 8px;
-        color: #8b4513;
+        color: #991b1b;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -250,15 +251,15 @@ def load_mobile_responsive_css():
     .info-item .value {
         font-size: clamp(1.1em, 3.5vw, 1.4em);
         font-weight: 700;
-        color: #654321;
+        color: #7f1d1d;
         margin: 0;
         font-family: 'Kanit', sans-serif;
         line-height: 1.2;
     }
     
-    /* Animal Display - Mobile Optimized */
+    /* Animal Display - Mobile Optimized with Red Theme */
     .animal-display {
-        background: linear-gradient(45deg, #ffd700, #ffed4e);
+        background: linear-gradient(45deg, #fbbf24, #f59e0b);
         border-radius: 50%;
         width: clamp(80px, 20vw, 120px);
         height: clamp(80px, 20vw, 120px);
@@ -266,8 +267,9 @@ def load_mobile_responsive_css():
         align-items: center;
         justify-content: center;
         margin: 20px auto;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
         animation: gentle-pulse 3s ease-in-out infinite;
+        border: 3px solid #dc2626;
     }
     
     @keyframes gentle-pulse {
@@ -286,9 +288,9 @@ def load_mobile_responsive_css():
         height: clamp(40px, 12vw, 60px);
         border-radius: 50%;
         margin: 10px auto;
-        border: 3px solid #fff;
+        border: 3px solid #dc2626;
         box-shadow: 
-            0 5px 15px rgba(0,0,0,0.3),
+            0 5px 15px rgba(220, 38, 38, 0.4),
             inset 0 2px 5px rgba(255,255,255,0.5);
         transition: transform 0.3s ease;
     }
@@ -703,23 +705,100 @@ def load_mobile_responsive_css():
         display: none !important;
     }
     
-    /* Scrollbar Styling */
-    ::-webkit-scrollbar {
-        width: 8px;
+    /* Mobile-First Date Input Styling */
+    .mobile-date-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 20px 15px;
+        margin: 15px 0;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
     
-    ::-webkit-scrollbar-track {
-        background: rgba(255,255,255,0.1);
+    .mobile-date-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        margin: 15px 0;
+    }
+    
+    @media (max-width: 480px) {
+        .mobile-date-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+    }
+    
+    .date-input-group {
+        text-align: center;
+    }
+    
+    .date-label {
+        font-size: 0.9em;
+        color: #8b4513;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-family: 'Sarabun', sans-serif;
+    }
+    
+    .date-select {
+        width: 100%;
+        padding: 12px 8px;
+        border: 2px solid #d4af37;
         border-radius: 10px;
+        font-size: 1.1em;
+        font-family: 'Kanit', sans-serif;
+        text-align: center;
+        background: white;
+        color: #654321;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 8px center;
+        background-repeat: no-repeat;
+        background-size: 16px;
+        padding-right: 32px;
     }
     
-    ::-webkit-scrollbar-thumb {
-        background: rgba(212,175,55,0.5);
+    .date-select:focus {
+        outline: none;
+        border-color: #ffd700;
+        box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+    }
+    
+    .time-input-container {
+        margin-top: 20px;
+        text-align: center;
+    }
+    
+    .time-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 10px;
+    }
+    
+    .time-input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #d4af37;
         border-radius: 10px;
+        font-size: 1.2em;
+        font-family: 'Kanit', sans-serif;
+        text-align: center;
+        background: white;
+        color: #654321;
     }
     
-    ::-webkit-scrollbar-thumb:hover {
-        background: rgba(212,175,55,0.7);
+    .time-input:focus {
+        outline: none;
+        border-color: #ffd700;
+        box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+    }
+    
+    /* Hide default Streamlit date inputs on mobile */
+    @media (max-width: 768px) {
+        .stDateInput, .stTimeInput {
+            display: none !important;
+        }
     }
     
     /* Accessibility - Focus States */
@@ -946,26 +1025,172 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # Mobile-optimized Sidebar
-    with st.sidebar:
-        st.markdown("### 📋 ข้อมูลสำหรับผูกดวง")
-        st.markdown("---")
+# --- Mobile-Friendly Date Input Component ---
+def show_mobile_date_input():
+    """Create a mobile-friendly date and time input interface."""
+    
+    # Get current date for defaults
+    import datetime
+    current_year = datetime.date.today().year
+    
+    st.markdown("""
+    <div class="mobile-date-container">
+        <h4 style="text-align: center; color: #8b4513; margin-bottom: 20px; font-family: 'Kanit', sans-serif;">
+            📅 ข้อมูลวันเวลาเกิด
+        </h4>
+        <div id="mobile-date-inputs">
+            <div class="mobile-date-grid">
+                <div class="date-input-group">
+                    <div class="date-label">วัน</div>
+                    <select class="date-select" id="day-select">
+                    </select>
+                </div>
+                <div class="date-input-group">
+                    <div class="date-label">เดือน</div>
+                    <select class="date-select" id="month-select">
+                    </select>
+                </div>
+                <div class="date-input-group">
+                    <div class="date-label">ปี (ค.ศ.)</div>
+                    <select class="date-select" id="year-select">
+                    </select>
+                </div>
+            </div>
+            
+            <div class="time-input-container">
+                <div class="date-label">🕐 เวลาเกิด (ถ้าทราบ)</div>
+                <div class="time-grid">
+                    <div>
+                        <div class="date-label" style="margin-bottom: 5px;">ชั่วโมง</div>
+                        <select class="time-input" id="hour-select">
+                        </select>
+                    </div>
+                    <div>
+                        <div class="date-label" style="margin-bottom: 5px;">นาที</div>
+                        <select class="time-input" id="minute-select">
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    (function() {
+        // Thai month names
+        const thaiMonths = [
+            'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+            'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+        ];
         
-        default_date = datetime.date.today() - datetime.timedelta(days=365*25)
+        // Populate day select
+        const daySelect = document.getElementById('day-select');
+        for (let i = 1; i <= 31; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            if (i === 8) option.selected = true; // Default to 8th
+            daySelect.appendChild(option);
+        }
+        
+        // Populate month select
+        const monthSelect = document.getElementById('month-select');
+        thaiMonths.forEach((month, index) => {
+            const option = document.createElement('option');
+            option.value = index + 1;
+            option.textContent = month;
+            if (index === 6) option.selected = true; // Default to July
+            monthSelect.appendChild(option);
+        });
+        
+        // Populate year select (1950 to current year)
+        const yearSelect = document.getElementById('year-select');
+        const currentYear = new Date().getFullYear();
+        for (let year = currentYear; year >= 1950; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year + ' (' + (year + 543) + ')'; // Show both Christian and Buddhist era
+            if (year === 1980) option.selected = true; // Default to 1980
+            yearSelect.appendChild(option);
+        }
+        
+        // Populate hour select
+        const hourSelect = document.getElementById('hour-select');
+        for (let i = 0; i < 24; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i.toString().padStart(2, '0') + ' น.';
+            if (i === 7) option.selected = true; // Default to 7 AM
+            hourSelect.appendChild(option);
+        }
+        
+        // Populate minute select
+        const minuteSelect = document.getElementById('minute-select');
+        for (let i = 0; i < 60; i += 5) { // 5-minute intervals
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i.toString().padStart(2, '0') + ' น.';
+            if (i === 30) option.selected = true; // Default to 30 minutes
+            minuteSelect.appendChild(option);
+        }
+        
+        // Function to get selected date and time
+        window.getMobileDateTime = function() {
+            return {
+                day: parseInt(daySelect.value),
+                month: parseInt(monthSelect.value),
+                year: parseInt(yearSelect.value),
+                hour: parseInt(hourSelect.value),
+                minute: parseInt(minuteSelect.value)
+            };
+        };
+        
+        // Update day options when month/year changes
+        function updateDays() {
+            const month = parseInt(monthSelect.value);
+            const year = parseInt(yearSelect.value);
+            const daysInMonth = new Date(year, month, 0).getDate();
+            
+            // Clear existing options
+            daySelect.innerHTML = '';
+            
+            // Add new options
+            for (let i = 1; i <= daysInMonth; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                daySelect.appendChild(option);
+            }
+            
+            // Set default to 8th or last day if month has fewer days
+            daySelect.value = Math.min(8, daysInMonth);
+        }
+        
+        monthSelect.addEventListener('change', updateDays);
+        yearSelect.addEventListener('change', updateDays);
+        
+        // Initialize
+        updateDays();
+    })();
+    </script>
+    """, unsafe_allow_html=True)
+    
+    # Hidden fallback inputs for desktop
+    col1, col2 = st.columns(2)
+    with col1:
         birth_date = st.date_input(
-            "📅 วัน/เดือน/ปีเกิด:", 
-            default_date, 
-            min_value=datetime.date(1920, 1, 1), 
+            "📅 วันเกิด (Desktop):",
+            datetime.date(1980, 7, 8),
+            min_value=datetime.date(1950, 1, 1),
             max_value=datetime.date.today()
         )
-        
+    with col2:
         birth_time = st.time_input(
-            "🕐 เวลาเกิด (ถ้าทราบ):", 
-            datetime.time(12, 00)
+            "🕐 เวลาเกิด (Desktop):",
+            datetime.time(7, 30)
         )
-        
-        st.markdown("---")
-        fortune_button = st.button("🔮 เปิดดวงชะตา", use_container_width=True)
+    
+    return birth_date, birth_time
 
     # Get API key
     api_key = os.environ.get("OPENAI_API_KEY")
