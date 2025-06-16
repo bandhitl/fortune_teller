@@ -1,11 +1,10 @@
 # fortune.py
 # This file contains the core logic for calculating Thai and Chinese fortunes
-# and generating a detailed AI-powered reading.
+# and generating a detailed AI-powered reading using a stable version of the OpenAI library.
 
 import datetime
 import os
-import httpx
-from openai import OpenAI
+import openai # Import the openai library (older version syntax)
 
 def get_thai_fortune_details(birth_date):
     """
@@ -51,7 +50,9 @@ def get_chinese_fortune_details(year):
 
 def generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time):
     """
-    Generates a detailed fortune using the OpenAI API.
+    Generates a detailed fortune using the v0.28.0 OpenAI Python library.
+    This syntax is different from newer versions and is more resilient to certain
+    server environment issues.
 
     Args:
         api_key (str): The user's OpenAI API key.
@@ -66,32 +67,11 @@ def generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time):
     if not api_key:
         return "Error: OpenAI API key is missing. Please provide your API key to generate a fortune."
     
-    client = None
     try:
-        # --- STRATEGY 4: RADICAL ISOLATION ---
-        # Temporarily remove proxy environment variables before client initialization.
-        # This is a targeted workaround for platform environments that incorrectly
-        # inject proxy settings as keyword arguments.
-        
-        saved_proxies = {
-            'https_proxy': os.environ.pop('HTTPS_PROXY', None),
-            'http_proxy': os.environ.pop('HTTP_PROXY', None)
-        }
+        # --- STRATEGY 6: STABLE LIBRARY VERSION ---
+        # Set the API key directly on the openai module (this is the old syntax)
+        openai.api_key = api_key
 
-        # With the proxy environment variables gone, initialize the client.
-        # It now has no memory of the platform's proxy settings.
-        client = OpenAI(api_key=api_key)
-
-        # Restore the environment variables for good measure, although it's
-        # not strictly necessary for the remainder of this app's execution.
-        if saved_proxies['https_proxy']:
-            os.environ['HTTPS_PROXY'] = saved_proxies['https_proxy']
-        if saved_proxies['http_proxy']:
-            os.environ['HTTP_PROXY'] = saved_proxies['http_proxy']
-        # --- END OF STRATEGY ---
-
-
-        # Construct a detailed prompt for the AI
         prompt = (
             f"Act as an expert astrologer combining Thai and Chinese traditions. "
             f"A person was born on a {day_name} at {birth_time.strftime('%H:%M')}. Their lucky color is {thai_color} and their Chinese Zodiac animal is the {animal_name}. "
@@ -104,18 +84,24 @@ def generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time):
             f"Write this in a warm, encouraging, and mystical tone. Use markdown for formatting."
         )
 
-        # Make the API call
-        chat_completion = client.chat.completions.create(
+        # Use the older `openai.ChatCompletion.create` method
+        chat_completion = openai.ChatCompletion.create(
+            model="gpt-4-turbo",
             messages=[
                 {
                     "role": "user",
-                    "content": prompt,
+                    "content": prompt
                 }
-            ],
-            model="gpt-4-turbo",
+            ]
         )
-        return chat_completion.choices[0].message.content
+        
+        # The response structure is also slightly different
+        return chat_completion['choices'][0]['message']['content']
+
+    except openai.error.AuthenticationError as e:
+        return f"Authentication Error: The OpenAI API key is invalid or has expired. Please check your key. Details: {e}"
+    except openai.error.APIError as e:
+        return f"The AI oracle's API returned an error: {e}"
     except Exception as e:
         # Provide a more detailed error message for easier debugging
-        return f"An error occurred while communicating with the AI oracle: {type(e).__name__} - {e}"
-
+        return f"An unexpected error occurred: {type(e).__name__} - {e}"
