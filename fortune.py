@@ -72,8 +72,13 @@ def generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time):
         proxy_url = os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")
         
         if proxy_url:
-            # If a proxy is set in the environment, create an httpx client with it
-            http_client = httpx.Client(proxies=proxy_url)
+            # If a proxy is set in the environment, create an httpx client.
+            # Support both the older `proxies` parameter and the newer `proxy`
+            # parameter used by httpx.
+            try:
+                http_client = httpx.Client(proxy=proxy_url)
+            except TypeError:
+                http_client = httpx.Client(proxies=proxy_url)
             client = OpenAI(api_key=api_key, http_client=http_client)
         else:
             # If no proxy is set, initialize the client normally
