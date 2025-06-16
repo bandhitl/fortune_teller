@@ -1,96 +1,70 @@
-# fortune.py
-# This file contains the core logic for calculating Thai and Chinese fortunes
-# and generating a detailed AI-powered reading.
+# streamlit_app.py
+# This file creates a production-ready web application that securely uses
+# an API key from the server's environment variables (e.g., on Render).
 
+import streamlit as st
 import datetime
-from openai import OpenAI
+import os # Import the 'os' module to access environment variables
+from fortune import get_thai_fortune_details, get_chinese_fortune_details, generate_ai_fortune
 
-def get_thai_fortune_details(birth_date):
-    """
-    Determines the Thai day-of-birth details.
+# --- Page Configuration ---
+st.set_page_config(
+    page_title="AI Thai-Chinese Fortune Teller",
+    page_icon="✨",
+    layout="wide"
+)
 
-    Args:
-        birth_date (datetime.date): The user's date of birth.
+# --- Securely Get API Key ---
+# This line reads the 'OPENAI_API_KEY' from the environment variables
+# that you set in your Render dashboard.
+api_key = os.environ.get("OPENAI_API_KEY")
 
-    Returns:
-        tuple: A tuple containing the day name and its associated color.
-    """
-    day_index = birth_date.weekday()
-    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    day_name = days[day_index]
+# --- Application UI ---
+st.title("✨ AI Thai-Chinese Fortune Teller")
+st.markdown("Unlock the secrets of your destiny by combining ancient wisdom with modern AI. Provide your birth date and time for a personalized reading.")
 
-    thai_colors = {
-        "Sunday": "Red",
-        "Monday": "Yellow",
-        "Tuesday": "Pink",
-        "Wednesday": "Green",
-        "Thursday": "Orange",
-        "Friday": "Blue",
-        "Saturday": "Purple"
-    }
-    return day_name, thai_colors[day_name]
+# --- Sidebar for Inputs ---
+st.sidebar.header("Your Details")
 
-def get_chinese_fortune_details(year):
-    """
-    Determines the Chinese Zodiac animal.
+# Date of Birth Input
+default_date = datetime.date.today() - datetime.timedelta(days=365*25)
+birth_date = st.sidebar.date_input(
+    "Enter your date of birth:",
+    default_date,
+    min_value=datetime.date(1920, 1, 1),
+    max_value=datetime.date.today()
+)
 
-    Args:
-        year (int): The user's year of birth.
+# Time of Birth Input
+birth_time = st.sidebar.time_input(
+    "Enter your time of birth (optional):",
+    datetime.time(12, 00)
+)
 
-    Returns:
-        str: The name of the zodiac animal.
-    """
-    zodiac_animals = [
-        "Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake",
-        "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"
-    ]
-    index = (year - 4) % 12
-    return zodiac_animals[index]
 
-def generate_ai_fortune(api_key, day_name, thai_color, animal_name):
-    """
-    Generates a detailed fortune using the OpenAI API.
-
-    Args:
-        api_key (str): The user's OpenAI API key.
-        day_name (str): The day of the week of birth.
-        thai_color (str): The lucky color associated with the day.
-        animal_name (str): The Chinese zodiac animal.
-
-    Returns:
-        str: A detailed, AI-generated fortune, or an error message.
-    """
+# --- Fortune Button and Logic ---
+if st.sidebar.button("🔮 Reveal My AI Fortune"):
+    # Check if the API key was found in the environment
     if not api_key:
-        return "Error: OpenAI API key is missing. Please provide your API key to generate a fortune."
-    
-    try:
-        # Initialize the OpenAI client with the provided API key
-        client = OpenAI(api_key=api_key)
+        st.error("Configuration Error: The OpenAI API key is not set on the server. The administrator needs to set the OPENAI_API_KEY environment variable.")
+    elif not birth_date:
+        st.error("Please enter your date of birth.")
+    else:
+        st.balloons()
+        with st.spinner("Consulting the celestial AI oracles... This may take a moment."):
+            # 1. Get the basic astrological details
+            day_name, thai_color = get_thai_fortune_details(birth_date)
+            animal_name = get_chinese_fortune_details(birth_date.year)
+            
+            # 2. Generate the AI fortune, now including the birth time
+            ai_fortune = generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time)
+            
+            # 3. Display the results
+            st.subheader("📜 Your Personalized Astrological Reading")
+            st.info(f"Based on being born on a **{day_name}** at **{birth_time.strftime('%H:%M')}**, with a Zodiac sign of the **{animal_name}**.")
+            st.markdown("---")
+            st.markdown(ai_fortune)
 
-        # Construct a detailed prompt for the AI
-        prompt = (
-            f"Act as an expert astrologer combining Thai and Chinese traditions. "
-            f"A person was born on a {day_name} (lucky color: {thai_color}) and their Chinese Zodiac animal is the {animal_name}. "
-            f"Please provide a detailed and insightful fortune for them. Cover the following sections:\n\n"
-            f"1.  **Personality Insight:** A deep dive into their character, blending traits from both their birth day and zodiac animal.\n"
-            f"2.  **Career & Path:** Guidance on suitable career paths and their professional strengths.\n"
-            f"3.  **Love & Relationships:** Advice on their approach to love and compatibility.\n"
-            f"4.  **Lucky Charm for the Year:** Suggest a simple, symbolic lucky charm.\n\n"
-            f"Write this in a warm, encouraging, and mystical tone. Use markdown for formatting."
-        )
-
-        # Make the API call
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt,
-                }
-            ],
-            model="gpt-3.5-turbo",
-        )
-        return chat_completion.choices[0].message.content
-    except Exception as e:
-        # Handle potential errors like invalid API key, network issues, etc.
-        return f"An error occurred while generating your fortune: {e}"
-
+st.markdown("---")
+st.markdown("### About This App")
+st.markdown("This fortune teller combines Thai and Chinese astrological traditions with the power of AI to create a unique and insightful reading just for you.")
