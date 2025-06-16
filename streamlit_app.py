@@ -1,106 +1,92 @@
-# --- Smart Loading Component ---
-def show_progressive_loading():
-    """Display progressive loading with real-time updates."""
-    return """
-    <div id="mystical-loading" class="mystical-loading-overlay">
-        <div class="mystical-loading-content">
-            <div class="loading-title">
-                🔮 กำลังเปิดดวงชะตา 🔮
-            </div>
-            <div class="loading-subtitle" id="loading-subtitle">
-                เริ่มต้นการวิเคราะห์ดวงดาว...
-            </div>
-            
-            <div class="mystical-spinner-container">
-                <div class="mystical-spinner"></div>
-            </div>
-            
-            <div class="loading-progress-bar">
-                <div class="loading-progress-fill" id="progress-fill"></div>
-            </div>
-            
-            <div class="loading-current-step" id="current-step">
-                ✨ เตรียมข้อมูลการวิเคราะห์
-            </div>
-            
-            <div class="loading-time" id="loading-time">
-                เวลาที่ใช้: <span id="elapsed-time">0</span> วินาที
-            </div>
-        </div>
-    </div>
+# --- Simple Progressive Loading Component ---
+def show_simple_loading_with_progress():
+    """Display a clean loading screen with progress steps."""
+    placeholder = st.empty()
     
-    <script>
-    (function() {
-        let startTime = Date.now();
-        let currentStep = 0;
+    steps = [
+        {"text": "🔍 วิเคราะห์วันเวลาเกิด", "duration": 1.0},
+        {"text": "🐉 คำนวณปีนักษัตรจีน", "duration": 1.0}, 
+        {"text": "🏮 คำนวณ八字และธาตุ", "duration": 1.0},
+        {"text": "🎨 กำหนดสีมงคล", "duration": 1.0},
+        {"text": "🤖 เชื่อมต่อกับเทพ AI", "duration": 2.0}
+    ]
+    
+    import time
+    
+    for i, step in enumerate(steps):
+        progress = int((i + 1) / len(steps) * 100)
         
-        const steps = [
-            { text: "✨ เตรียมข้อมูลการวิเคราะห์", duration: 500 },
-            { text: "📅 คำนวณดาวประจำวันเกิด", duration: 800 },
-            { text: "🐉 วิเคราะห์ปีนักษัตรจีน", duration: 600 },
-            { text: "🏮 คำนวณ八字และธาตุ", duration: 700 },
-            { text: "🎨 กำหนดสีมงคลประจำตัว", duration: 500 },
-            { text: "🤖 เชื่อมต่อกับเทพ AI", duration: 1000 },
-            { text: "📝 สร้างคำพยากรณ์ส่วนบุคคล", duration: 2000 },
-            { text: "🌟 จัดรูปแบบข้อมูลสุดท้าย", duration: 500 }
-        ];
+        with placeholder.container():
+            st.markdown(f"""
+            <div style="
+                text-align: center;
+                padding: 50px 20px;
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+                border-radius: 20px;
+                margin: 20px 0;
+                color: white;
+                font-family: 'Sarabun', sans-serif;
+            ">
+                <h2 style="font-size: 2em; margin-bottom: 20px;">🔮 กำลังเปิดดวงชะตา 🔮</h2>
+                <p style="font-size: 1.3em; margin-bottom: 30px; color: #ffd700; font-weight: 600;">
+                    {step['text']}
+                </p>
+                <div style="
+                    width: 80%;
+                    max-width: 400px;
+                    height: 10px;
+                    background: rgba(255,255,255,0.3);
+                    border-radius: 10px;
+                    margin: 20px auto;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        width: {progress}%;
+                        height: 100%;
+                        background: linear-gradient(90deg, #ffd700, #ffed4e);
+                        border-radius: 10px;
+                        transition: width 0.5s ease;
+                    "></div>
+                </div>
+                <p style="font-size: 1.1em; margin-top: 20px; opacity: 0.9;">
+                    ความคืบหน้า: {progress}% | ขั้นตอนที่ {i+1} จาก {len(steps)}
+                </p>
+                <div style="
+                    margin-top: 30px;
+                    font-size: 2em;
+                    animation: spin 2s linear infinite;
+                ">🌟</div>
+            </div>
+            <style>
+            @keyframes spin {{
+                from {{ transform: rotate(0deg); }}
+                to {{ transform: rotate(360deg); }}
+            }}
+            </style>
+            """, unsafe_allow_html=True)
         
-        const subtitles = [
-            "กำลังวิเคราะห์วันเวลาเกิดของคุณ...",
-            "ค้นหาดาวประจำวันและคุณสมบัติ...",
-            "คำนวณสัตว์ประจำปีและลักษณะนิสัย...",
-            "วิเคราะห์ระบบ八字แบบละเอียด...",
-            "เลือกสีที่เหมาะสมกับพลังงานคุณ...",
-            "รอการตอบสนองจากระบบ AI...",
-            "AI กำลังเขียนคำทำนายเฉพาะคุณ...",
-            "เกือบเสร็จแล้ว กรุณารอสักครู่..."
-        ];
-        
-        function updateTimer() {
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
-            document.getElementById('elapsed-time').textContent = elapsed;
-        }
-        
-        function updateProgress() {
-            if (currentStep < steps.length) {
-                const step = steps[currentStep];
-                const subtitle = subtitles[currentStep];
-                
-                // Update text
-                document.getElementById('current-step').textContent = step.text;
-                document.getElementById('loading-subtitle').textContent = subtitle;
-                
-                // Update progress bar
-                const progress = ((currentStep + 1) / steps.length) * 100;
-                document.getElementById('progress-fill').style.width = progress + '%';
-                
-                currentStep++;
-                
-                // Schedule next step
-                setTimeout(updateProgress, step.duration);
-            }
-        }
-        
-        // Start the process
-        updateProgress();
-        
-        // Update timer every second
-        const timerInterval = setInterval(updateTimer, 1000);
-        
-        // Clean up when loading is done
-        window.hideLoading = function() {
-            clearInterval(timerInterval);
-            const loadingElement = document.getElementById('mystical-loading');
-            if (loadingElement) {
-                loadingElement.style.opacity = '0';
-                setTimeout(() => {
-                    loadingElement.remove();
-                }, 500);
-            }
-        };
-    })();
-    </script>
-    """# streamlit_app.py
+        time.sleep(step['duration'])
+    
+    # Final completion message
+    with placeholder.container():
+        st.markdown("""
+        <div style="
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-radius: 20px;
+            margin: 20px 0;
+            color: white;
+            font-family: 'Sarabun', sans-serif;
+        ">
+            <h2 style="font-size: 2em; margin-bottom: 15px;">✅ เสร็จสมบูรณ์!</h2>
+            <p style="font-size: 1.2em;">กำลังแสดงผลดวงชะตาของคุณ...</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    time.sleep(1)
+    placeholder.empty()
+    return True# streamlit_app.py
 # Mobile-optimized Enhanced UI version with responsive design
 
 import streamlit as st
@@ -997,30 +983,19 @@ def main():
             # Success effects
             st.balloons()
             
-            # Show progressive loading screen
-            loading_placeholder = st.empty()
-            with loading_placeholder.container():
-                st.markdown(show_progressive_loading(), unsafe_allow_html=True)
-            
+            # Show simple, clean loading
             try:
-                # Quick initial calculations (show immediate feedback)
+                show_simple_loading_with_progress()
+                
+                # Get fortune details
                 day_name, thai_color = get_thai_fortune_details(birth_date)
                 thai_animal, english_animal = get_chinese_fortune_details(birth_date.year)
-                
-                # Wait for loading animation to show meaningful progress
-                import time
-                time.sleep(6)  # Let the progress animation run through steps
-                
-                # Clear loading screen with fade effect
-                st.markdown('<script>if(window.hideLoading) window.hideLoading();</script>', unsafe_allow_html=True)
-                time.sleep(0.5)  # Wait for fade effect
-                loading_placeholder.empty()
                 
                 # Display results immediately
                 display_mobile_optimized_boards(day_name, thai_color, thai_animal, english_animal, birth_time, birth_date)
                 
-                # Generate AI fortune with streamlined loading
-                with st.spinner("🤖 เทพ AI กำลังสร้างคำพยากรณ์เฉพาะสำหรับคุณ..."):
+                # Generate AI fortune with simple spinner
+                with st.spinner("🤖 เทพ AI กำลังเขียนคำพยากรณ์เฉพาะสำหรับคุณ..."):
                     text_fortune = generate_ai_fortune(api_key, day_name, thai_color, thai_animal, birth_time)
                 
                 # Display fortune in mobile-friendly container
