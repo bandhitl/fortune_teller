@@ -85,7 +85,8 @@ def generate_ai_fortune(birth_date, birth_time, day_name, thai_color, thai_anima
         return "❌ ไม่พบ OpenAI API Key ในระบบ กรุณาตั้งค่า Environment Variable"
     
     try:
-        client = openai.OpenAI(api_key=api_key)
+        # Use older openai syntax that works
+        openai.api_key = api_key
         
         # Calculate age
         today = datetime.date.today()
@@ -115,8 +116,8 @@ def generate_ai_fortune(birth_date, birth_time, day_name, thai_color, thai_anima
         ใช้ภาษาไทยที่สวยงาม เป็นกันเอง และให้กำลังใจ ยาวประมาณ 300-400 คำ
         """
         
-        response = client.chat.completions.create(
-            model="gpt-4",
+        response = openai.ChatCompletion.create(
+            model="gpt-4o",  # Use GPT-4o as requested
             messages=[
                 {"role": "system", "content": "คุณเป็นหมอดูผู้เชี่ยวชาญด้านโหราศาสตร์ไทยและจีน มีประสบการณ์กว่า 30 ปี ให้คำทำนายที่แม่นยำและให้กำลังใจ"},
                 {"role": "user", "content": prompt}
@@ -241,8 +242,16 @@ col1, col2 = st.columns(2)
 with col1:
     birth_date = st.date_input(
         "📅 วัน/เดือน/ปีเกิด:", 
-        datetime.date(1990, 1, 1),
+        datetime.date(1990, 1, 1),  # Fixed generic date
         min_value=datetime.date(1950, 1, 1), 
+        max_value=datetime.date.today()
+    )
+
+with col2:
+    birth_time = st.time_input(
+        "🕐 เวลาเกิด:", 
+        datetime.time(12, 0)  # Fixed noon time
+    )950, 1, 1), 
         max_value=datetime.date.today()
     )
 
@@ -348,27 +357,36 @@ if st.button("🔮 เปิดดวงชะตา", use_container_width=True,
         </div>
         """, unsafe_allow_html=True)
     
-    # Generate AI fortune
+    # Generate AI fortune with proper loading
     st.markdown("### 📜 คำพยากรณ์ดวงชะตา")
     
-    with st.spinner("🤖 AI กำลังวิเคราะห์ดวงชะตาของคุณ กรุณารอสักครู่..."):
+    # Show comprehensive loading that waits for actual AI response
+    with st.spinner("🤖 AI กำลังวิเคราะห์ดวงชะตาของคุณ กรุณารอสักครู่... (อาจใช้เวลา 30-60 วินาที)"):
+        # Generate AI fortune - spinner will stay until this actually completes
         fortune_text = generate_ai_fortune(birth_date, birth_time, day_name, thai_color, thai_animal)
     
-    # Display fortune
-    st.markdown(f"""
-    <div style="
-        background: rgba(255,255,255,0.95);
-        padding: 25px;
-        border-radius: 15px;
-        margin: 20px 0;
-        line-height: 1.8;
-        color: #333;
-        border-left: 5px solid #dc2626;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    ">
-        {fortune_text}
-    </div>
-    """, unsafe_allow_html=True)
+    # Only show result after AI is completely done
+    if fortune_text:
+    
+    # Only show result after AI is completely done
+    if fortune_text:
+        # Display fortune
+        st.markdown(f"""
+        <div style="
+            background: rgba(255,255,255,0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            line-height: 1.8;
+            color: #333;
+            border-left: 5px solid #dc2626;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        ">
+            {fortune_text}
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.error("❌ ไม่สามารถสร้างคำทำนายได้ กรุณาลองใหม่")
 
 # Footer
 st.markdown("---")
