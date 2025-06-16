@@ -241,23 +241,15 @@ col1, col2 = st.columns(2)
 
 with col1:
     birth_date = st.date_input(
-        "📅 วัน/เดือน/ปีเกิด:", 
+        "📅 วัน/เดือน/ปีเกิด:",
         datetime.date(1990, 1, 1),
-        min_value=datetime.date(1950, 1, 1), 
+        min_value=datetime.date(1950, 1, 1),
         max_value=datetime.date.today()
     )
 
 with col2:
     birth_time = st.time_input(
-        "🕐 เวลาเกิด:", 
-        datetime.time(12, 0)
-    )950, 1, 1), 
-        max_value=datetime.date.today()
-    )
-
-with col2:
-    birth_time = st.time_input(
-        "🕐 เวลาเกิด:", 
+        "🕐 เวลาเกิด:",
         datetime.time(12, 0)
     )
 
@@ -364,10 +356,7 @@ if st.button("🔮 เปิดดวงชะตา", use_container_width=True,
     with st.spinner("🤖 AI กำลังวิเคราะห์ดวงชะตาของคุณ กรุณารอสักครู่... (อาจใช้เวลา 30-60 วินาที)"):
         # Generate AI fortune - spinner will stay until this actually completes
         fortune_text = generate_ai_fortune(birth_date, birth_time, day_name, thai_color, thai_animal)
-    
-    # Only show result after AI is completely done
-    if fortune_text:
-    
+
     # Only show result after AI is completely done
     if fortune_text:
         # Display fortune
