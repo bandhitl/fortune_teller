@@ -1,75 +1,145 @@
 # streamlit_app.py
-# This file creates a production-ready web application that securely uses
-# an API key from the server's environment variables (e.g., on Render).
+# This file creates a production-ready web application with a new UI
+# to display an "Astrology Board" instead of an AI image.
 
 import streamlit as st
 import datetime
-import os # Import the 'os' module to access environment variables
-from fortune import get_thai_fortune_details, get_chinese_fortune_details, generate_ai_fortune_and_image
+import os
+from fortune import get_thai_fortune_details, get_chinese_fortune_details, generate_ai_fortune
 
 # --- Page Configuration ---
 st.set_page_config(
     page_title="AI โหราศาสตร์ไทย-จีน",
-    page_icon="✨",
+    page_icon="📜",
     layout="wide"
 )
+
+# --- Function to Display the Astrology Board ---
+def display_astrology_board(day_name, thai_color, thai_animal, english_animal, birth_time):
+    """Creates a visually appealing summary board of the user's astrological data."""
+    zodiac_emojis = {
+        "Rat": "🐭", "Ox": "🐮", "Tiger": "🐯", "Rabbit": "🐰", "Dragon": "🐲", 
+        "Snake": "🐍", "Horse": "🐴", "Goat": "🐐", "Monkey": "🐵", 
+        "Rooster": "🐔", "Dog": "🐶", "Pig": "🐷"
+    }
+    animal_emoji = zodiac_emojis.get(english_animal, "✨")
+
+    st.markdown(f"""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+    .board {{
+        background-color: #fdf6e3; /* A warm, parchment-like color */
+        border: 3px solid #b58900; /* A golden-brown border */
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        font-family: 'Sarabun', sans-serif;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
+    }}
+    .board h3 {{
+        color: #654f00;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #b58900;
+        padding-bottom: 10px;
+    }}
+    .info-grid {{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        align-items: center;
+    }}
+    .info-item {{
+        background-color: #fffbf0;
+        padding: 15px;
+        border-radius: 10px;
+    }}
+    .info-item p.label {{
+        font-size: 1.1em;
+        margin-bottom: 5px;
+        color: #837031;
+    }}
+    .info-item p.value {{
+        font-size: 1.6em;
+        font-weight: bold;
+        color: #584900;
+        margin: 0;
+    }}
+    .emoji {{
+        font-size: 6em;
+        line-height: 1;
+    }}
+    .color-circle {{
+        width: 50px;
+        height: 50px;
+        background-color: {thai_color.lower()};
+        border-radius: 50%;
+        margin: auto;
+        border: 3px solid #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }}
+    </style>
+    <div class="board">
+        <h3>กระดานชันษาจร</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <p class="label">ดาวพระเคราะห์ประจำวันเกิด</p>
+                <p class="value">วัน{day_name}</p>
+            </div>
+            <div class="info-item">
+                <p class="label">ปีนักษัตร</p>
+                <p class="value">{thai_animal}</p>
+            </div>
+            <div class="info-item">
+                <p class="label">เวลาตกฟาก</p>
+                <p class="value">{birth_time.strftime('%H:%M')} น.</p>
+            </div>
+             <div class="info-item">
+                <p class="label">สีมงคล</p>
+                <div class="color-circle"></div>
+            </div>
+        </div>
+        <p class="emoji">{animal_emoji}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
 
 # --- Securely Get API Key ---
 api_key = os.environ.get("OPENAI_API_KEY")
 
 # --- Application UI ---
-st.title("✨ AI โหราศาสตร์ไทย-จีน")
-st.markdown("ปลดล็อกความลับแห่งโชคชะตาของคุณ ด้วยการผสมผสานศาสตร์โบราณเข้ากับ AI สมัยใหม่ เพียงกรอกวันและเวลาเกิดของคุณเพื่อรับคำทำนายเฉพาะบุคคล")
+st.title("📜 AI โหราจารย์")
+st.markdown("ไขความลับแห่งดวงดาว ผูกดวงชะตาตามหลักโหราศาสตร์ไทย-จีนโบราณ เพื่อค้นหาคำตอบและแนวทางแห่งชีวิต")
 
 # --- Sidebar for Inputs ---
-st.sidebar.header("ข้อมูลของคุณ")
+st.sidebar.header("ข้อมูลสำหรับผูกดวง")
 
-# Date of Birth Input
 default_date = datetime.date.today() - datetime.timedelta(days=365*25)
-birth_date = st.sidebar.date_input(
-    "กรอกวันเกิดของคุณ:",
-    default_date,
-    min_value=datetime.date(1920, 1, 1),
-    max_value=datetime.date.today()
-)
+birth_date = st.sidebar.date_input("วัน/เดือน/ปีเกิด:", default_date, min_value=datetime.date(1920, 1, 1), max_value=datetime.date.today())
+birth_time = st.sidebar.time_input("เวลาเกิด (ถ้าทราบ):", datetime.time(12, 00))
 
-# Time of Birth Input
-birth_time = st.sidebar.time_input(
-    "กรอกเวลาเกิด (ถ้าทราบ):",
-    datetime.time(12, 00)
-)
-
-# --- Fortune Button and Logic ---
-if st.sidebar.button("🔮 เปิดคำทำนาย"):
+if st.sidebar.button("📜 เปิดดวงชะตา"):
     if not api_key:
-        st.error("เกิดข้อผิดพลาดในการตั้งค่า: ไม่พบ OpenAI API key บนเซิร์ฟเวอร์ ผู้ดูแลระบบต้องทำการตั้งค่า OPENAI_API_KEY ก่อน")
+        st.error("เกิดข้อผิดพลาด: ไม่พบ OpenAI API key บนเซิร์ฟเวอร์")
     elif not birth_date:
-        st.error("กรุณากรอกวันเกิดของคุณ")
+        st.error("กรุณากรอกวันเกิด")
     else:
         st.balloons()
-        with st.spinner("กำลังปรึกษาเทพพยากรณ์ AI... อาจใช้เวลาสักครู่ในการสร้างภาพและคำทำนาย"):
-            # 1. Get the basic astrological details
+        with st.spinner("กำลังผูกดวงและอ่านคำพยากรณ์..."):
             day_name, thai_color = get_thai_fortune_details(birth_date)
             thai_animal, english_animal = get_chinese_fortune_details(birth_date.year)
             
-            # 2. Generate the AI fortune text and image URL
-            text_fortune, image_url = generate_ai_fortune_and_image(api_key, day_name, thai_color, thai_animal, english_animal, birth_time)
+            # Display the new Astrology Board UI
+            display_astrology_board(day_name, thai_color, thai_animal, english_animal, birth_time)
             
-            # 3. Display the results
-            st.subheader("📜 คำทำนายดวงชะตาเฉพาะบุคคลของคุณ")
+            # Generate and display the text fortune
+            text_fortune = generate_ai_fortune(api_key, day_name, thai_color, thai_animal, birth_time)
             
-            if image_url:
-                st.image(image_url, caption="ภาพอินโฟกราฟิกดวงชะตาของคุณ", use_column_width=True)
-            
-            st.info(f"คำทำนายนี้อ้างอิงจากการเกิด **วัน{day_name}** เวลา **{birth_time.strftime('%H:%M')} น.** และปีนักษัตร **{thai_animal}**")
+            st.subheader("คำพยากรณ์ดวงชะตา")
             st.markdown("---")
             
-            if text_fortune:
-                st.markdown(text_fortune)
+            if "Error:" in text_fortune:
+                st.error(text_fortune)
             else:
-                st.error("ไม่สามารถสร้างคำทำนายได้ในขณะนี้")
+                st.markdown(text_fortune)
 
-
-st.markdown("---")
-st.markdown("### เกี่ยวกับแอปพลิเคชันนี้")
-st.markdown("แอปพลิเคชันนี้ผสมผสานหลักโหราศาสตร์ไทยและจีนเข้ากับพลังของปัญญาประดิษฐ์ (AI) เพื่อสร้างคำทำนายที่ลึกซึ้งและเป็นเอกลักษณ์สำหรับคุณโดยเฉพาะ")
