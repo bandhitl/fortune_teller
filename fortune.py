@@ -1,6 +1,6 @@
 # fortune.py
 # This file contains the core logic for calculating Thai and Chinese fortunes
-# and generating a detailed AI-powered reading and infographic in Thai.
+# and generating a detailed AI-powered reading and a faster infographic in Thai.
 
 import datetime
 import os
@@ -76,16 +76,18 @@ def generate_ai_fortune_and_image(api_key, day_name, thai_color, thai_animal, en
 
         # --- 1. Generate Fortune Text in Thai ---
         text_prompt = (
-            f"ทำตัวเป็นนักโหราศาสตร์ผู้เชี่ยวชาญที่ผสมผสานศาสตร์ไทยและจีนเข้าด้วยกัน "
-            f"มีคนเกิดวัน {day_name} เวลา {birth_time.strftime('%H:%M')} สีนำโชคของเขาคือ {thai_color} และปีนักษัตรจีนของเขาคือ {thai_animal}. "
-            f"โปรดทำนายดวงชะตาอย่างละเอียดและลึกซึ้งให้แก่บุคคลนี้ โดยครอบคลุมหัวข้อต่อไปนี้:\n\n"
-            f"1.  **ภาพรวมและลักษณะนิสัย:** เจาะลึกถึงบุคลิกภาพ โดยผสมผสานลักษณะจากวันเกิด เวลาเกิด และปีนักษัตร\n"
-            f"2.  **การงานและอาชีพ:** คำแนะนำเกี่ยวกับเส้นทางอาชีพที่เหมาะสมและจุดแข็งในการทำงาน\n"
-            f"3.  **ความรักและความสัมพันธ์:** คำแนะนำเกี่ยวกับความรักและความเข้ากันได้กับผู้อื่น\n"
-            f"4.  **สุขภาพ:** ข้อควรระวังและคำแนะนำด้านสุขภาพตามหลักโหราศาสตร์\n"
-            f"5.  **วัตถุมงคลเสริมดวงประจำปี:** แนะนำวัตถุมงคลที่เรียบง่ายและเป็นสัญลักษณ์สำหรับปีนี้\n\n"
-            f"**คำสั่งสำคัญ: โปรดเขียนคำตอบทั้งหมดเป็นภาษาไทยเท่านั้น** ใช้น้ำเสียงที่อบอุ่น ให้กำลังใจ และลึกซึ้ง"
+            f"จงสวมบทบาทเป็น 'โหราจารย์' ผู้มีภูมิความรู้ลึกซึ้งในศาสตร์แห่งดวงดาว ทำการผูกดวงและอ่านชะตาบุคคลผู้เกิดในวัน {day_name} เวลา {birth_time.strftime('%H:%M')} ซึ่งถือกำเนิดในปีนักษัตร {thai_animal} โดยมีสีมงคลคือ {thai_color}.\n\n"
+            f"**คำสั่งในการพยากรณ์:**\n"
+            f"จงเริ่มต้นด้วยการ 'เปิดดวงชะตา' โดยอธิบายถึงแก่นแท้แห่งดวงชะตานี้ก่อน ว่าอิทธิพลจาก 'ดาวพระเคราะห์ประจำวันเกิด' ตามคัมภีร์มหาทักษาของไทย ได้หล่อหลอมพื้นฐานอุปนิสัยและจิตใจไว้อย่างไร จากนั้น จงวิเคราะห์ว่า 'พลังแห่งนักษัตร' จากศาสตร์จีนได้ส่งผลต่อภาพรวมของชีวิตและวาสนาบารมีอย่างไร และ 'เวลาตกฟาก' ได้เข้ามาขัดเกลาให้ดวงชะตามีความเฉพาะเจาะจงและโดดเด่นในด้านใดเป็นพิเศษ จงวิเคราะห์ปฏิสัมพันธ์ระหว่างพลังงานทั้งสามส่วนนี้เพื่อสร้างความน่าเชื่อถือสูงสุด\n\n"
+            f"เมื่อวางรากฐานแห่งความเข้าใจแล้ว จึงเริ่ม 'อ่านคำพยากรณ์' อย่างละเอียดในหัวข้อต่อไปนี้:\n"
+            f"1.  **วิเคราะห์พื้นวงชะตาและจิตวิญญาณ:** เจาะลึกถึงแก่นแท้ของตัวตน จุดแข็ง จุดอ่อน และพลังที่ซ่อนเร้นอยู่ภายใน\n"
+            f"2.  **เส้นทางแห่งเกียรติยศ (การงานและการเงิน):** ชี้แนะแนวทางอาชีพที่รุ่งเรือง โอกาสทางการเงิน และสิ่งที่ควรระวังในการลงทุน\n"
+            f"3.  **ดวงใจปรารถนา (ความรักและเมตตามหานิยม):** ทำนายถึงลักษณะคู่ครองที่สมพงษ์ แนวโน้มความสัมพันธ์ และเสน่ห์ต่อคนรอบข้าง\n"
+            f"4.  **กายสังขาร (สุขภาพพลานามัย):** ให้คำแนะนำในการดูแลสุขภาพตามจุดอ่อนของดวงชะตา\n"
+            f"5.  **เคล็ดลับเสริมสร้างบารมี:** แนะนำแนวทางการปฏิบัติหรือวัตถุมงคลที่ช่วยส่งเสริมดวงชะตาให้รุ่งโรจน์ยิ่งขึ้น\n\n"
+            f"จงรจนาคำทำนายทั้งหมดเป็น **'ภาษาไทย'** ด้วยลีลาของนักปราชญ์ผู้สุขุม ลึกซึ้ง และเปี่ยมด้วยเมตตา เพื่อให้ผู้รับคำทำนายได้ทั้งสติปัญญาและกำลังใจในการดำเนินชีวิต"
         )
+
 
         chat_completion = openai.ChatCompletion.create(
             model="gpt-4-turbo",
@@ -93,19 +95,20 @@ def generate_ai_fortune_and_image(api_key, day_name, thai_color, thai_animal, en
         )
         text_fortune = chat_completion['choices'][0]['message']['content']
 
-        # --- 2. Generate Infographic Image ---
+        # --- 2. Generate Infographic Image using a faster model ---
         image_prompt = (
-            f"Create a beautiful, mystical infographic for a Thai astrology reading. The subject's Chinese Zodiac animal is the {english_animal}. "
-            f"Their lucky color is {thai_color}. The style should be elegant and modern with a magical feel, incorporating subtle Thai design motifs. "
-            f"Visually feature the {english_animal} as the centerpiece. Use a color palette dominated by {thai_color}. "
-            f"Do not include any text. Focus on abstract symbols representing luck, career, and love. High-resolution digital art."
+            f"An artistic and symbolic image reflecting the future of a person for the next 6 months. "
+            f"Their Chinese zodiac is the {english_animal} and their lucky color is {thai_color}. "
+            f"Create a beautiful, abstract, and hopeful image. "
+            f"The style should be a dreamy, digital painting. Do not include any text. "
+            f"Focus on symbols of growth, opportunity, and positive energy, subtly incorporating the animal and the color."
         )
         
         image_response = openai.Image.create(
             prompt=image_prompt,
             n=1,
             size="1024x1024",
-            model="dall-e-3" # Explicitly use DALL-E 3
+            model="dall-e-2" # Using the faster DALL-E 2 model
         )
         image_url = image_response['data'][0]['url']
         
