@@ -3,6 +3,8 @@
 # and generating a detailed AI-powered reading.
 
 import datetime
+import os
+import httpx
 from openai import OpenAI
 
 def get_thai_fortune_details(birth_date):
@@ -65,17 +67,23 @@ def generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time):
         return "Error: OpenAI API key is missing. Please provide your API key to generate a fortune."
     
     try:
-        # Initialize the OpenAI client with the provided API key
-        client = OpenAI(api_key=api_key)
+        # Explicitly configure the HTTP client. httpx automatically respects
+        # proxy environment variables (HTTP_PROXY, HTTPS_PROXY), which is the
+        # recommended way to handle proxies in production environments like Render.
+        # This can prevent conflicts that cause the 'proxies' keyword error.
+        http_client = httpx.Client(proxies=os.environ.get("HTTPS_PROXY"))
 
-        # Construct a detailed prompt for the AI, now including birth time
+        # Initialize the OpenAI client with the custom http_client
+        client = OpenAI(api_key=api_key, http_client=http_client)
+
+        # Construct a detailed prompt for the AI, now including birth time (and corrected typo)
         prompt = (
             f"Act as an expert astrologer combining Thai and Chinese traditions. "
             f"A person was born on a {day_name} at {birth_time.strftime('%H:%M')}. Their lucky color is {thai_color} and their Chinese Zodiac animal is the {animal_name}. "
             f"Please provide a detailed and insightful fortune for them, taking the specific time of birth into account for a more precise reading. Cover the following sections:\n\n"
             f"1.  **Personality Insight:** A deep dive into their character, blending traits from their birth day, time, and zodiac animal.\n"
             f"2.  **Career & Path:** Guidance on suitable career paths and their professional strengths.\n"
--           f"3.  **Love & Relationships:** Advice on their approach to love and compatibility.\n"
+            f"3.  **Love & Relationships:** Advice on their approach to love and compatibility.\n"
             f"4.  **Health & Wellness:** Astrological insights into their well-being.\n"
             f"5.  **Lucky Charm for the Year:** Suggest a simple, symbolic lucky charm.\n\n"
             f"Write this in a warm, encouraging, and mystical tone. Use markdown for formatting."
@@ -93,5 +101,5 @@ def generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time):
         )
         return chat_completion.choices[0].message.content
     except Exception as e:
-        # Handle potential errors like invalid API key, network issues, etc.
-        return f"An error occurred while generating your fortune: {e}"
+        # Provide a more detailed error message for easier debugging
+        return f"An error occurred while communicating with the AI oracle: {type(e).__name__} - {e}"
