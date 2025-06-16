@@ -8,7 +8,12 @@ choices = [day.title() for day in THAI_FORTUNES.keys()]
 day = st.selectbox('Day of the week you were born:', choices)
 
 # Input for birth year
-year = st.number_input('Year you were born:', min_value=1900, max_value=2100, step=1)
+year = st.number_input(
+    'Year you were born:',
+    min_value=1900,
+    max_value=2100,
+    step=1,
+)
 
 if st.button('Tell my fortune'):
     color, thai_trait = get_thai_fortune(day)
