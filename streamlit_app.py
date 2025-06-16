@@ -1,5 +1,40 @@
-# streamlit_app.py
-# Enhanced UI version with modern design and better visual elements
+# --- Enhanced Loading Component ---
+def show_mystical_loading():
+    """Display a beautiful full-screen loading animation with steps."""
+    return st.markdown("""
+    <div class="mystical-loading-overlay">
+        <div class="mystical-loading-content">
+            <div class="loading-title">
+                🔮 กำลังเปิดดวงชะตา 🔮
+            </div>
+            <div class="loading-subtitle">
+                กรุณารอคำทำนายจากเทพ AI สักครู่...<br>
+                ขณะนี้กำลังวิเคราะห์ดวงดาวของคุณ
+            </div>
+            
+            <div class="mystical-spinner-container">
+                <div class="mystical-spinner"></div>
+            </div>
+            
+            <div class="loading-progress-bar">
+                <div class="loading-progress-fill"></div>
+            </div>
+            
+            <div class="loading-steps">
+                <div class="loading-step active">✨ เริ่มต้นการผูกดวงชะตาของคุณ</div>
+                <div class="loading-step">🔍 วิเคราะห์ข้อมูลวันเวลาเกิด</div>
+                <div class="loading-step">🤖 ปรึกษาเทพ AI ผู้รอบรู้</div>
+                <div class="loading-step">📝 เขียนคำพยากรณ์สำหรับคุณ</div>
+            </div>
+            
+            <div style="margin-top: 20px; font-size: 0.9em; color: rgba(255,255,255,0.7);">
+                💫 กระบวนการนี้อาจใช้เวลา 30-60 วินาที<br>
+                ขึ้นอยู่กับความซับซ้อนของดวงชะตา
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)# streamlit_app.py
+# Mobile-optimized Enhanced UI version with responsive design
 
 import streamlit as st
 import datetime
@@ -14,167 +49,81 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Custom CSS for Enhanced UI ---
-def load_custom_css():
+# --- Enhanced Mobile-Responsive CSS ---
+def load_mobile_responsive_css():
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Kanit:wght@300;400;600;700&display=swap');
     
-    /* Global Styling */
+    /* Global Reset and Mobile Optimization */
+    * {
+        box-sizing: border-box;
+    }
+    
     .main {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 20px;
+        padding: 10px;
+        min-height: 100vh;
     }
     
     .stApp {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
     
-    /* Header Styling */
+    /* Hide sidebar toggle on mobile for cleaner look */
+    @media (max-width: 768px) {
+        .css-1dp5vir {
+            background: transparent;
+        }
+        .main {
+            padding: 5px;
+        }
+    }
+    
+    /* Enhanced Header - Mobile Responsive */
     .main-header {
         text-align: center;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 30px;
-        margin-bottom: 30px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        border-radius: 25px;
+        padding: 25px 15px;
+        margin-bottom: 20px;
         border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     }
     
     .main-header h1 {
         color: #ffffff;
         font-family: 'Kanit', sans-serif;
-        font-size: 3.5em;
-        margin-bottom: 15px;
+        font-size: clamp(1.8em, 5vw, 3.5em);
+        margin-bottom: 10px;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        line-height: 1.2;
     }
     
     .main-header p {
         color: rgba(255, 255, 255, 0.9);
         font-family: 'Sarabun', sans-serif;
-        font-size: 1.2em;
-        line-height: 1.6;
-    }
-    
-    /* Astrology Board Enhanced */
-    .board {
-        background: linear-gradient(145deg, #fdf6e3, #f7e98e);
-        border: none;
-        border-radius: 25px;
-        padding: 35px;
-        text-align: center;
-        font-family: 'Sarabun', sans-serif;
-        box-shadow: 
-            0 20px 40px rgba(0,0,0,0.1),
-            inset 0 1px 0 rgba(255,255,255,0.6);
-        margin: 30px 0;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    /* BaZi Specific Styling */
-    .bazi-pillars {
-        margin: 20px 0;
-    }
-    
-    .pillar-row {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        margin-bottom: 15px;
-    }
-    
-    .pillar-item {
-        background: rgba(139, 69, 19, 0.1);
-        border: 2px solid #8b4513;
-        border-radius: 15px;
-        padding: 15px 20px;
-        min-width: 80px;
-        transition: transform 0.3s ease;
-    }
-    
-    .pillar-item:hover {
-        transform: scale(1.05);
-        background: rgba(139, 69, 19, 0.2);
-    }
-    
-    .pillar-label {
-        font-size: 0.8em;
-        color: #8b4513;
-        margin: 0 0 5px 0;
-        font-weight: 600;
-    }
-    
-    .pillar-value {
-        font-size: 1.4em;
-        font-weight: 700;
-        color: #654321;
-        margin: 0 0 3px 0;
-        font-family: 'Kanit', sans-serif;
-    }
-    
-    .pillar-thai {
-        font-size: 0.8em;
-        color: #8b4513;
-        margin: 0 0 3px 0;
-        font-style: italic;
-    }
-    
-    .pillar-detail {
-        font-size: 0.7em;
-        color: #a0522d;
+        font-size: clamp(0.9em, 3vw, 1.2em);
+        line-height: 1.5;
         margin: 0;
     }
     
-    .element-display {
-        margin-top: 25px;
-    }
-    
-    .element-label {
-        font-size: 1.1em;
-        color: #8b4513;
-        margin-bottom: 10px;
-        font-weight: 600;
-    }
-    
-    .element-circle {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        margin: 10px auto;
-        border: 4px solid #fff;
+    /* Mobile-First Board Design */
+    .board {
+        background: linear-gradient(145deg, #fdf6e3, #f7e98e);
+        border: none;
+        border-radius: 20px;
+        padding: 20px 15px;
+        text-align: center;
+        font-family: 'Sarabun', sans-serif;
         box-shadow: 
-            0 8px 20px rgba(0,0,0,0.3),
-            inset 0 2px 5px rgba(255,255,255,0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.3s ease;
-    }
-    
-    .element-circle:hover {
-        transform: scale(1.1) rotate(5deg);
-    }
-    
-    .element-emoji {
-        font-size: 2.5em;
-    }
-    
-    .element-name {
-        font-size: 1.3em;
-        font-weight: 700;
-        color: #654321;
-        margin: 10px 0 5px 0;
-        font-family: 'Kanit', sans-serif;
-    }
-    
-    .element-characteristic {
-        font-size: 0.9em;
-        color: #8b4513;
-        margin: 5px 0;
-        line-height: 1.4;
-        font-style: italic;
+            0 15px 35px rgba(0,0,0,0.1),
+            inset 0 1px 0 rgba(255,255,255,0.6);
+        margin: 15px 0;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
     }
     
     .board::before {
@@ -189,35 +138,58 @@ def load_custom_css():
     
     .board h3 {
         color: #8b4513;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
         font-family: 'Kanit', sans-serif;
-        font-size: 2.2em;
+        font-size: clamp(1.3em, 4vw, 2.2em);
         font-weight: 600;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        line-height: 1.2;
     }
     
-    .info-grid {
+    /* Mobile-Optimized Grid System */
+    .mobile-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 25px;
-        margin-bottom: 25px;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        width: 100%;
     }
     
+    @media (min-width: 768px) {
+        .mobile-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .mobile-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+    }
+    
+    /* Info Items - Touch Friendly */
     .info-item {
-        background: rgba(255, 255, 255, 0.7);
-        padding: 20px;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 18px 12px;
         border-radius: 15px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: all 0.3s ease;
         border: 1px solid rgba(212, 175, 55, 0.3);
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        cursor: pointer;
     }
     
-    .info-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    .info-item:hover, .info-item:active {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        background: rgba(255, 255, 255, 0.95);
     }
     
     .info-item .label {
-        font-size: 1em;
+        font-size: clamp(0.8em, 2.5vw, 1em);
         margin-bottom: 8px;
         color: #8b4513;
         font-weight: 600;
@@ -226,18 +198,20 @@ def load_custom_css():
     }
     
     .info-item .value {
-        font-size: 1.4em;
+        font-size: clamp(1.1em, 3.5vw, 1.4em);
         font-weight: 700;
         color: #654321;
         margin: 0;
         font-family: 'Kanit', sans-serif;
+        line-height: 1.2;
     }
     
+    /* Animal Display - Mobile Optimized */
     .animal-display {
         background: linear-gradient(45deg, #ffd700, #ffed4e);
         border-radius: 50%;
-        width: 120px;
-        height: 120px;
+        width: clamp(80px, 20vw, 120px);
+        height: clamp(80px, 20vw, 120px);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -252,87 +226,463 @@ def load_custom_css():
     }
     
     .animal-emoji {
-        font-size: 4em;
+        font-size: clamp(2.5em, 8vw, 4em);
         line-height: 1;
     }
     
+    /* Color Circle - Touch Friendly */
     .color-circle {
-        width: 60px;
-        height: 60px;
+        width: clamp(40px, 12vw, 60px);
+        height: clamp(40px, 12vw, 60px);
         border-radius: 50%;
         margin: 10px auto;
-        border: 4px solid #fff;
+        border: 3px solid #fff;
         box-shadow: 
             0 5px 15px rgba(0,0,0,0.3),
             inset 0 2px 5px rgba(255,255,255,0.5);
         transition: transform 0.3s ease;
     }
     
-    .color-circle:hover {
+    .color-circle:hover, .color-circle:active {
         transform: scale(1.1);
     }
     
-    /* Fortune Text Styling */
+    /* BaZi Pillars - Mobile Stack */
+    .bazi-pillars {
+        margin: 20px 0;
+    }
+    
+    .pillar-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    
+    @media (max-width: 480px) {
+        .pillar-row {
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+    }
+    
+    .pillar-item {
+        background: rgba(139, 69, 19, 0.1);
+        border: 2px solid #8b4513;
+        border-radius: 12px;
+        padding: 12px 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .pillar-item:hover, .pillar-item:active {
+        transform: scale(1.02);
+        background: rgba(139, 69, 19, 0.2);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .pillar-label {
+        font-size: clamp(0.7em, 2vw, 0.8em);
+        color: #8b4513;
+        margin: 0 0 3px 0;
+        font-weight: 600;
+    }
+    
+    .pillar-value {
+        font-size: clamp(1.1em, 3vw, 1.4em);
+        font-weight: 700;
+        color: #654321;
+        margin: 0 0 2px 0;
+        font-family: 'Kanit', sans-serif;
+    }
+    
+    .pillar-thai {
+        font-size: clamp(0.6em, 1.8vw, 0.8em);
+        color: #8b4513;
+        margin: 0 0 2px 0;
+        font-style: italic;
+    }
+    
+    .pillar-detail {
+        font-size: clamp(0.6em, 1.6vw, 0.7em);
+        color: #a0522d;
+        margin: 0;
+    }
+    
+    /* Element Display - Mobile Responsive */
+    .element-display {
+        margin-top: 20px;
+    }
+    
+    .element-label {
+        font-size: clamp(0.9em, 2.5vw, 1.1em);
+        color: #8b4513;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+    
+    .element-circle {
+        width: clamp(60px, 15vw, 80px);
+        height: clamp(60px, 15vw, 80px);
+        border-radius: 50%;
+        margin: 10px auto;
+        border: 3px solid #fff;
+        box-shadow: 
+            0 8px 20px rgba(0,0,0,0.3),
+            inset 0 2px 5px rgba(255,255,255,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .element-circle:hover, .element-circle:active {
+        transform: scale(1.05) rotate(5deg);
+    }
+    
+    .element-emoji {
+        font-size: clamp(1.8em, 6vw, 2.5em);
+    }
+    
+    .element-name {
+        font-size: clamp(1em, 3vw, 1.3em);
+        font-weight: 700;
+        color: #654321;
+        margin: 8px 0 5px 0;
+        font-family: 'Kanit', sans-serif;
+    }
+    
+    .element-characteristic {
+        font-size: clamp(0.8em, 2.2vw, 0.9em);
+        color: #8b4513;
+        margin: 5px 0;
+        line-height: 1.4;
+        font-style: italic;
+    }
+    
+    /* Fortune Container - Mobile Optimized */
     .fortune-container {
         background: rgba(255, 255, 255, 0.95);
         border-radius: 20px;
-        padding: 30px;
-        margin: 30px 0;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        padding: 20px 15px;
+        margin: 20px 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         border-left: 5px solid #d4af37;
     }
     
     .fortune-container h3 {
         color: #8b4513;
         font-family: 'Kanit', sans-serif;
-        font-size: 1.8em;
-        margin-bottom: 20px;
+        font-size: clamp(1.2em, 4vw, 1.8em);
+        margin-bottom: 15px;
         text-align: center;
+        line-height: 1.2;
     }
     
-    /* Sidebar Styling */
+    /* Sidebar Styling - Mobile Friendly */
     .css-1d391kg {
         background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(10px);
     }
     
-    /* Button Styling */
+    /* Button Styling - Touch Optimized */
     .stButton > button {
         background: linear-gradient(45deg, #d4af37, #ffd700);
         color: #8b4513;
         border: none;
         border-radius: 25px;
-        padding: 15px 30px;
+        padding: 18px 30px;
         font-weight: 600;
-        font-size: 1.1em;
+        font-size: clamp(1em, 3vw, 1.1em);
         transition: all 0.3s ease;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        width: 100%;
+        min-height: 50px;
     }
     
-    .stButton > button:hover {
+    .stButton > button:hover, .stButton > button:active {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         background: linear-gradient(45deg, #ffd700, #d4af37);
     }
     
-    /* Loading Animation */
-    .loading-container {
+    /* Date and Time Input Styling */
+    .stDateInput > div, .stTimeInput > div {
+        border-radius: 10px;
+    }
+    
+    /* Content Cards - Mobile Responsive */
+    .content-card {
+        background: rgba(255,255,255,0.9);
+        padding: 20px 15px;
+        border-radius: 15px;
+        line-height: 1.7;
+        font-family: 'Sarabun', sans-serif;
+        font-size: clamp(0.9em, 2.5vw, 1.1em);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+    }
+    
+    /* Grid for Analysis Cards */
+    .analysis-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 15px;
+    }
+    
+    @media (min-width: 600px) {
+        .analysis-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+    }
+    
+    .analysis-card {
+        background: rgba(139,69,19,0.1);
+        padding: 15px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(212,175,55,0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .analysis-card:hover, .analysis-card:active {
+        background: rgba(139,69,19,0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    /* Welcome Message - Mobile Centered */
+    .welcome-message {
         text-align: center;
-        padding: 40px;
+        padding: 40px 20px;
+        color: rgba(255,255,255,0.9);
     }
     
-    .mystical-loader {
-        display: inline-block;
-        width: 60px;
-        height: 60px;
-        border: 3px solid rgba(212, 175, 55, 0.3);
+    .welcome-message h2 {
+        font-family: 'Kanit', sans-serif;
+        font-size: clamp(1.5em, 5vw, 2.5em);
+        margin-bottom: 15px;
+        line-height: 1.3;
+    }
+    
+    .welcome-message p {
+        font-size: clamp(1em, 3vw, 1.2em);
+        font-family: 'Sarabun', sans-serif;
+        line-height: 1.6;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    /* Enhanced Loading Screen */
+    .mystical-loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        animation: fadeIn 0.5s ease-in;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .mystical-loading-content {
+        text-align: center;
+        color: white;
+        padding: 40px 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(15px);
+        max-width: 90%;
+        width: 400px;
+    }
+    
+    .loading-title {
+        font-family: 'Kanit', sans-serif;
+        font-size: clamp(1.5em, 5vw, 2.5em);
+        font-weight: 700;
+        margin-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        background: linear-gradient(45deg, #ffd700, #ffed4e, #d4af37);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: titleGlow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes titleGlow {
+        from { 
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+            transform: scale(1);
+        }
+        to { 
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+            transform: scale(1.02);
+        }
+    }
+    
+    .loading-subtitle {
+        font-family: 'Sarabun', sans-serif;
+        font-size: clamp(1em, 3vw, 1.3em);
+        margin-bottom: 30px;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.5;
+        font-weight: 500;
+    }
+    
+    .mystical-spinner-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 30px 0;
+        position: relative;
+    }
+    
+    .mystical-spinner {
+        width: clamp(80px, 20vw, 120px);
+        height: clamp(80px, 20vw, 120px);
+        border: 4px solid rgba(255, 215, 0, 0.2);
+        border-top: 4px solid #ffd700;
         border-radius: 50%;
-        border-top-color: #d4af37;
-        animation: spin 1s ease-in-out infinite;
+        animation: mysticalSpin 1.5s linear infinite;
+        position: relative;
     }
     
-    @keyframes spin {
-        to { transform: rotate(360deg); }
+    .mystical-spinner::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 60%;
+        height: 60%;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid #ffffff;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: mysticalSpin 1s linear infinite reverse;
+    }
+    
+    .mystical-spinner::after {
+        content: '🔮';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: clamp(1.5em, 5vw, 2.5em);
+        animation: float 2s ease-in-out infinite;
+    }
+    
+    @keyframes mysticalSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+        50% { transform: translate(-50%, -50%) translateY(-10px); }
+    }
+    
+    .loading-steps {
+        font-family: 'Sarabun', sans-serif;
+        font-size: clamp(0.9em, 2.5vw, 1.1em);
+        color: rgba(255, 255, 255, 0.8);
+        margin-top: 20px;
+        line-height: 1.6;
+    }
+    
+    .loading-step {
+        margin: 8px 0;
+        padding: 5px 0;
+        opacity: 0.6;
+        transition: all 0.5s ease;
+    }
+    
+    .loading-step.active {
+        opacity: 1;
+        color: #ffd700;
+        font-weight: 600;
+        transform: scale(1.05);
+    }
+    
+    .loading-step::before {
+        content: '✨ ';
+        margin-right: 5px;
+    }
+    
+    .loading-progress-bar {
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        margin: 20px 0 10px 0;
+        overflow: hidden;
+    }
+    
+    .loading-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #ffd700, #ffed4e, #d4af37);
+        border-radius: 10px;
+        animation: progressFlow 3s ease-in-out infinite;
+        width: 0%;
+    }
+    
+    @keyframes progressFlow {
+        0% { width: 0%; }
+        50% { width: 70%; }
+        100% { width: 100%; }
+    }
+    
+    /* Hide default streamlit spinner */
+    .stSpinner {
+        display: none !important;
+    }
+    
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.1);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: rgba(212,175,55,0.5);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(212,175,55,0.7);
+    }
+    
+    /* Accessibility - Focus States */
+    .info-item:focus, .pillar-item:focus, .analysis-card:focus {
+        outline: 2px solid #d4af37;
+        outline-offset: 2px;
+    }
+    
+    /* Print Styles */
+    @media print {
+        .main {
+            background: white !important;
+        }
+        .board {
+            background: white !important;
+            border: 1px solid #ccc !important;
+        }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -356,18 +706,18 @@ def get_bazi_elements(birth_date, birth_time):
     
     # Earthly Branches (地支) with Thai translations
     earthly_branches = [
-        {"chinese": "子", "thai": "จื่อ", "animal": "鼠", "thai_animal": "หนู", "time": "23:00-01:00"},
-        {"chinese": "丑", "thai": "โฉว", "animal": "牛", "thai_animal": "วัว", "time": "01:00-03:00"},
-        {"chinese": "寅", "thai": "อิน", "animal": "虎", "thai_animal": "เสือ", "time": "03:00-05:00"},
-        {"chinese": "卯", "thai": "เหมา", "animal": "兔", "thai_animal": "กระต่าย", "time": "05:00-07:00"},
-        {"chinese": "辰", "thai": "เฉิน", "animal": "龍", "thai_animal": "มังกร", "time": "07:00-09:00"},
-        {"chinese": "巳", "thai": "ซื่อ", "animal": "蛇", "thai_animal": "งู", "time": "09:00-11:00"},
-        {"chinese": "午", "thai": "วู่", "animal": "馬", "thai_animal": "ม้า", "time": "11:00-13:00"},
-        {"chinese": "未", "thai": "เหวย", "animal": "羊", "thai_animal": "แพะ", "time": "13:00-15:00"},
-        {"chinese": "申", "thai": "เสิน", "animal": "猴", "thai_animal": "ลิง", "time": "15:00-17:00"},
-        {"chinese": "酉", "thai": "โย่ว", "animal": "雞", "thai_animal": "ไก่", "time": "17:00-19:00"},
-        {"chinese": "戌", "thai": "ซู่", "animal": "狗", "thai_animal": "หมา", "time": "19:00-21:00"},
-        {"chinese": "亥", "thai": "ไห", "animal": "豬", "thai_animal": "หมู", "time": "21:00-23:00"}
+        {"chinese": "子", "thai": "จื่อ", "animal": "鼠", "thai_animal": "หนู", "time": "23-01น."},
+        {"chinese": "丑", "thai": "โฉว", "animal": "牛", "thai_animal": "วัว", "time": "01-03น."},
+        {"chinese": "寅", "thai": "อิน", "animal": "虎", "thai_animal": "เสือ", "time": "03-05น."},
+        {"chinese": "卯", "thai": "เหมา", "animal": "兔", "thai_animal": "กระต่าย", "time": "05-07น."},
+        {"chinese": "辰", "thai": "เฉิน", "animal": "龍", "thai_animal": "มังกร", "time": "07-09น."},
+        {"chinese": "巳", "thai": "ซื่อ", "animal": "蛇", "thai_animal": "งู", "time": "09-11น."},
+        {"chinese": "午", "thai": "วู่", "animal": "馬", "thai_animal": "ม้า", "time": "11-13น."},
+        {"chinese": "未", "thai": "เหวย", "animal": "羊", "thai_animal": "แพะ", "time": "13-15น."},
+        {"chinese": "申", "thai": "เสิน", "animal": "猴", "thai_animal": "ลิง", "time": "15-17น."},
+        {"chinese": "酉", "thai": "โย่ว", "animal": "雞", "thai_animal": "ไก่", "time": "17-19น."},
+        {"chinese": "戌", "thai": "ซู่", "animal": "狗", "thai_animal": "หมา", "time": "19-21น."},
+        {"chinese": "亥", "thai": "ไห", "animal": "豬", "thai_animal": "หมู", "time": "21-23น."}
     ]
     
     # Five Elements (五行) with detailed Thai explanations
@@ -399,7 +749,7 @@ def get_bazi_elements(birth_date, birth_time):
         }
     }
     
-    # Simplified calculation (in real app, you'd use proper Chinese calendar conversion)
+    # Simplified calculation
     year = birth_date.year
     month = birth_date.month
     day = birth_date.day
@@ -415,7 +765,7 @@ def get_bazi_elements(birth_date, birth_time):
     hour_stem_idx = (hour // 2) % 10
     hour_branch_idx = (hour // 2) % 12
     
-    # Dominant element (simplified)
+    # Dominant element
     dominant_element_key = list(elements.keys())[year % 5]
     dominant_element = elements[dominant_element_key]
     
@@ -431,9 +781,9 @@ def get_bazi_elements(birth_date, birth_time):
         "dominant_element": dominant_element
     }
 
-# --- Enhanced Astrology Board Function ---
-def display_enhanced_astrology_board(day_name, thai_color, thai_animal, english_animal, birth_time, birth_date):
-    """Creates an enhanced visually appealing astrology board with both Thai and Chinese systems."""
+# --- Enhanced Mobile-Responsive Astrology Board ---
+def display_mobile_optimized_boards(day_name, thai_color, thai_animal, english_animal, birth_time, birth_date):
+    """Creates mobile-optimized astrology boards."""
     zodiac_emojis = {
         "Rat": "🐭", "Ox": "🐮", "Tiger": "🐯", "Rabbit": "🐰", "Dragon": "🐲", 
         "Snake": "🐍", "Horse": "🐴", "Goat": "🐐", "Monkey": "🐵", 
@@ -441,7 +791,7 @@ def display_enhanced_astrology_board(day_name, thai_color, thai_animal, english_
     }
     animal_emoji = zodiac_emojis.get(english_animal, "✨")
     
-    # Color mapping for better display
+    # Color mapping
     color_map = {
         'แดง': '#dc2626', 'เขียว': '#16a34a', 'น้ำเงิน': '#2563eb',
         'เหลือง': '#eab308', 'ม่วง': '#9333ea', 'ชมพู': '#ec4899',
@@ -451,102 +801,98 @@ def display_enhanced_astrology_board(day_name, thai_color, thai_animal, english_
     
     # Get BaZi elements
     bazi = get_bazi_elements(birth_date, birth_time)
-
-    # Create two columns for Thai and Chinese boards
-    col1, col2 = st.columns(2)
     
-    with col1:
-        st.markdown(f"""
-        <div class="board">
-            <h3>🔮 กระดานชันษาจร 🔮</h3>
-            <div class="info-grid">
-                <div class="info-item">
-                    <p class="label">🌟 ดาวพระเคราะห์ประจำวัน</p>
-                    <p class="value">วัน{day_name}</p>
-                </div>
-                <div class="info-item">
-                    <p class="label">🐉 ปีนักษัตร</p>
-                    <p class="value">{thai_animal}</p>
-                </div>
-                <div class="info-item">
-                    <p class="label">⏰ เวลาตกฟาก</p>
-                    <p class="value">{birth_time.strftime('%H:%M')} น.</p>
-                </div>
-                <div class="info-item">
-                    <p class="label">🎨 สีมงคล</p>
-                    <div class="color-circle" style="background-color: {display_color};"></div>
-                    <p class="value">{thai_color}</p>
-                </div>
+    # Thai Board
+    st.markdown(f"""
+    <div class="board">
+        <h3>🔮 กระดานชันษาจร</h3>
+        <div class="mobile-grid">
+            <div class="info-item">
+                <p class="label">🌟 ดาวประจำวัน</p>
+                <p class="value">วัน{day_name}</p>
             </div>
-            <div class="animal-display">
-                <span class="animal-emoji">{animal_emoji}</span>
+            <div class="info-item">
+                <p class="label">🐉 ปีนักษัตร</p>
+                <p class="value">{thai_animal}</p>
+            </div>
+            <div class="info-item">
+                <p class="label">⏰ เวลาเกิด</p>
+                <p class="value">{birth_time.strftime('%H:%M')} น.</p>
+            </div>
+            <div class="info-item">
+                <p class="label">🎨 สีมงคล</p>
+                <div class="color-circle" style="background-color: {display_color};"></div>
+                <p class="value">{thai_color}</p>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        <div class="animal-display">
+            <span class="animal-emoji">{animal_emoji}</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
-    with col2:
-        st.markdown(f"""
-        <div class="board">
-            <h3>🏮 八字命盤 (Bā Zì) 🏮</h3>
-            <p style="font-size: 0.9em; color: #8b4513; margin-bottom: 20px;">
-                ระบบโหราศาสตร์จีนโบราณ คำนวณจากวันเวลาเกิด
-            </p>
-            <div class="bazi-pillars">
-                <div class="pillar-row">
-                    <div class="pillar-item">
-                        <p class="pillar-label">年柱 (ปี)</p>
-                        <p class="pillar-value">{bazi['year_stem']['chinese']}{bazi['year_branch']['chinese']}</p>
-                        <p class="pillar-thai">({bazi['year_stem']['thai']}{bazi['year_branch']['thai']})</p>
-                        <p class="pillar-detail">{bazi['year_branch']['thai_animal']}</p>
-                    </div>
-                    <div class="pillar-item">
-                        <p class="pillar-label">月柱 (เดือน)</p>
-                        <p class="pillar-value">{bazi['month_stem']['chinese']}{bazi['month_branch']['chinese']}</p>
-                        <p class="pillar-thai">({bazi['month_stem']['thai']}{bazi['month_branch']['thai']})</p>
-                        <p class="pillar-detail">{bazi['month_branch']['thai_animal']}</p>
-                    </div>
+    # Chinese BaZi Board
+    st.markdown(f"""
+    <div class="board">
+        <h3>🏮 八字命盤 (Bā Zì)</h3>
+        <p style="font-size: 0.9em; color: #8b4513; margin-bottom: 15px;">
+            โหราศาสตร์จีนโบราณ
+        </p>
+        <div class="bazi-pillars">
+            <div class="pillar-row">
+                <div class="pillar-item">
+                    <p class="pillar-label">年柱 (ปี)</p>
+                    <p class="pillar-value">{bazi['year_stem']['chinese']}{bazi['year_branch']['chinese']}</p>
+                    <p class="pillar-thai">({bazi['year_stem']['thai']}{bazi['year_branch']['thai']})</p>
+                    <p class="pillar-detail">{bazi['year_branch']['thai_animal']}</p>
                 </div>
-                <div class="pillar-row">
-                    <div class="pillar-item">
-                        <p class="pillar-label">日柱 (วัน)</p>
-                        <p class="pillar-value">{bazi['day_stem']['chinese']}{bazi['day_branch']['chinese']}</p>
-                        <p class="pillar-thai">({bazi['day_stem']['thai']}{bazi['day_branch']['thai']})</p>
-                        <p class="pillar-detail">{bazi['day_branch']['thai_animal']}</p>
-                    </div>
-                    <div class="pillar-item">
-                        <p class="pillar-label">時柱 (เวลา)</p>
-                        <p class="pillar-value">{bazi['hour_stem']['chinese']}{bazi['hour_branch']['chinese']}</p>
-                        <p class="pillar-thai">({bazi['hour_stem']['thai']}{bazi['hour_branch']['thai']})</p>
-                        <p class="pillar-detail">{bazi['hour_branch']['time']}</p>
-                    </div>
+                <div class="pillar-item">
+                    <p class="pillar-label">月柱 (เดือน)</p>
+                    <p class="pillar-value">{bazi['month_stem']['chinese']}{bazi['month_branch']['chinese']}</p>
+                    <p class="pillar-thai">({bazi['month_stem']['thai']}{bazi['month_branch']['thai']})</p>
+                    <p class="pillar-detail">{bazi['month_branch']['thai_animal']}</p>
                 </div>
             </div>
-            <div class="element-display">
-                <p class="element-label">主導五行 (ธาตุหลัก)</p>
-                <div class="element-circle" style="background-color: {bazi['dominant_element']['color']};">
-                    <span class="element-emoji">{bazi['dominant_element']['emoji']}</span>
+            <div class="pillar-row">
+                <div class="pillar-item">
+                    <p class="pillar-label">日柱 (วัน)</p>
+                    <p class="pillar-value">{bazi['day_stem']['chinese']}{bazi['day_branch']['chinese']}</p>
+                    <p class="pillar-thai">({bazi['day_stem']['thai']}{bazi['day_branch']['thai']})</p>
+                    <p class="pillar-detail">{bazi['day_branch']['thai_animal']}</p>
                 </div>
-                <p class="element-name">{bazi['dominant_element']['chinese']} ({bazi['dominant_element']['thai']})</p>
-                <p class="element-characteristic">{bazi['dominant_element']['characteristics']}</p>
+                <div class="pillar-item">
+                    <p class="pillar-label">時柱 (เวลา)</p>
+                    <p class="pillar-value">{bazi['hour_stem']['chinese']}{bazi['hour_branch']['chinese']}</p>
+                    <p class="pillar-thai">({bazi['hour_stem']['thai']}{bazi['hour_branch']['thai']})</p>
+                    <p class="pillar-detail">{bazi['hour_branch']['time']}</p>
+                </div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        <div class="element-display">
+            <p class="element-label">主導五行 (ธาตุหลัก)</p>
+            <div class="element-circle" style="background-color: {bazi['dominant_element']['color']};">
+                <span class="element-emoji">{bazi['dominant_element']['emoji']}</span>
+            </div>
+            <p class="element-name">{bazi['dominant_element']['chinese']} ({bazi['dominant_element']['thai']})</p>
+            <p class="element-characteristic">{bazi['dominant_element']['characteristics']}</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # --- Main Application ---
 def main():
-    # Load custom CSS
-    load_custom_css()
+    # Load mobile-responsive CSS
+    load_mobile_responsive_css()
     
     # Enhanced Header
     st.markdown("""
     <div class="main-header">
         <h1>🔮 AI โหราจารย์ 🔮</h1>
-        <p>✨ ไขความลับแห่งดวงดาว ผูกดวงชะตาตามหลักโหราศาสตร์ไทย-จีนโบราณ ✨<br>
-        🌟 เพื่อค้นหาคำตอบและแนวทางแห่งชีวิต 🌟</p>
+        <p>✨ ไขความลับแห่งดวงดาว<br>ผูกดวงชะตาไทย-จีนโบราณ ✨</p>
     </div>
     """, unsafe_allow_html=True)
 
-    # Sidebar for Inputs
+    # Mobile-optimized Sidebar
     with st.sidebar:
         st.markdown("### 📋 ข้อมูลสำหรับผูกดวง")
         st.markdown("---")
@@ -580,48 +926,110 @@ def main():
             # Success effects
             st.balloons()
             
-            # Loading spinner with custom message
-            with st.spinner("🔮 กำลังผูกดวงและอ่านคำพยากรณ์... ✨"):
-                try:
-                    # Get fortune details
-                    day_name, thai_color = get_thai_fortune_details(birth_date)
-                    thai_animal, english_animal = get_chinese_fortune_details(birth_date.year)
-                    
-                    # Display enhanced astrology board
-                    display_enhanced_astrology_board(day_name, thai_color, thai_animal, english_animal, birth_time, birth_date)
-                    
-                    # Generate AI fortune
+            # Show enhanced loading screen
+            loading_placeholder = st.empty()
+            with loading_placeholder.container():
+                show_mystical_loading()
+            
+            # Actual processing with progress simulation
+            import time
+            time.sleep(1)  # Show loading screen briefly
+            
+            try:
+                # Get fortune details
+                day_name, thai_color = get_thai_fortune_details(birth_date)
+                thai_animal, english_animal = get_chinese_fortune_details(birth_date.year)
+                
+                # Clear loading screen and show results
+                loading_placeholder.empty()
+                
+                # Display mobile-optimized boards
+                display_mobile_optimized_boards(day_name, thai_color, thai_animal, english_animal, birth_time, birth_date)
+                
+                # Generate AI fortune with another loading indicator
+                with st.spinner("🤖 เทพ AI กำลังเขียนคำพยากรณ์สำหรับคุณ..."):
                     text_fortune = generate_ai_fortune(api_key, day_name, thai_color, thai_animal, birth_time)
-                    
-                    # Display fortune in styled container
-                    st.markdown("""
-                    <div class="fortune-container">
-                        <h3>📜 คำพยากรณ์ดวงชะตา 📜</h3>
+                
+                # Display fortune in mobile-friendly container
+                st.markdown("""
+                <div class="fortune-container">
+                    <h3>📜 คำพยากรณ์ดวงชะตา</h3>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                if "Error:" in text_fortune:
+                    st.error(f"❌ {text_fortune}")
+                else:
+                    # Main fortune text
+                    st.markdown(f"""
+                    <div class="content-card">
+                        {text_fortune}
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    if "Error:" in text_fortune:
-                        st.error(f"❌ {text_fortune}")
-                    else:
-                        st.markdown(f"""
-                        <div style="background: rgba(255,255,255,0.9); padding: 25px; border-radius: 15px; 
-                                    line-height: 1.8; font-family: 'Sarabun', sans-serif; font-size: 1.1em;
-                                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-                            {text_fortune}
-                        </div>
-                        """, unsafe_allow_html=True)
+                    # BaZi Analysis Section
+                    bazi_info = get_bazi_elements(birth_date, birth_time)
+                    
+                    st.markdown("""
+                    <div class="fortune-container">
+                        <h3>🏮 การวิเคราะห์บุคลิกตาม八字</h3>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Element analysis
+                    st.markdown(f"""
+                    <div class="content-card">
+                        <h4 style="color: #8b4513; margin-bottom: 15px; text-align: center;">
+                            🌟 ธาตุหลัก: {bazi_info['dominant_element']['chinese']} ({bazi_info['dominant_element']['thai']}) {bazi_info['dominant_element']['emoji']}
+                        </h4>
                         
-                except Exception as e:
-                    st.error(f"❌ เกิดข้อผิดพลาด: {str(e)}")
+                        <p><strong>🎭 ลักษณะเด่น:</strong> {bazi_info['dominant_element']['characteristics']}</p>
+                        <p><strong>💫 บุคลิกภาพ:</strong> {bazi_info['dominant_element']['personality']}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Pillars explanation
+                    st.markdown("<h5 style='color: white; text-align: center; margin: 20px 0;'>📝 ความหมายของเสาทั้ง 4</h5>", unsafe_allow_html=True)
+                    
+                    # Mobile-friendly grid for pillar meanings
+                    st.markdown(f"""
+                    <div class="analysis-grid">
+                        <div class="analysis-card">
+                            <strong>年柱 (ปี):</strong> {bazi_info['year_stem']['chinese']}{bazi_info['year_branch']['chinese']} 
+                            ({bazi_info['year_stem']['thai']}{bazi_info['year_branch']['thai']})<br>
+                            <small style="color: #8b4513;">บรรพบุรุษ, รากเหง้า, วัยเด็ก</small>
+                        </div>
+                        <div class="analysis-card">
+                            <strong>月柱 (เดือน):</strong> {bazi_info['month_stem']['chinese']}{bazi_info['month_branch']['chinese']} 
+                            ({bazi_info['month_stem']['thai']}{bazi_info['month_branch']['thai']})<br>
+                            <small style="color: #8b4513;">พ่อแม่, วัยรุ่น, การศึกษา</small>
+                        </div>
+                        <div class="analysis-card">
+                            <strong>日柱 (วัน):</strong> {bazi_info['day_stem']['chinese']}{bazi_info['day_branch']['chinese']} 
+                            ({bazi_info['day_stem']['thai']}{bazi_info['day_branch']['thai']})<br>
+                            <small style="color: #8b4513;">ตัวเอง, คู่ชีวิต, วัยผู้ใหญ่</small>
+                        </div>
+                        <div class="analysis-card">
+                            <strong>時柱 (เวลา):</strong> {bazi_info['hour_stem']['chinese']}{bazi_info['hour_branch']['chinese']} 
+                            ({bazi_info['hour_stem']['thai']}{bazi_info['hour_branch']['thai']})<br>
+                            <small style="color: #8b4513;">ลูกหลาน, วัยชรา, อนาคต</small>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+            except Exception as e:
+                loading_placeholder.empty()  # Clear loading on error
+                st.error(f"❌ เกิดข้อผิดพลาด: {str(e)}")
     
     else:
-        # Welcome message when no fortune is generated
+        # Mobile-optimized welcome message
         st.markdown("""
-        <div style="text-align: center; padding: 50px; color: rgba(255,255,255,0.8);">
-            <h2 style="font-family: 'Kanit', sans-serif;">🌟 ยินดีต้อนรับสู่โลกแห่งโหราศาสตร์ 🌟</h2>
-            <p style="font-size: 1.2em; font-family: 'Sarabun', sans-serif; line-height: 1.6;">
+        <div class="welcome-message">
+            <h2>🌟 ยินดีต้อนรับสู่โลกแห่งโหราศาสตร์</h2>
+            <p>
                 กรอกข้อมูลวันเกิดของคุณในแถบด้านข้าง<br>
-                แล้วคลิก "เปิดดวงชะตา" เพื่อเริ่มต้นการเดินทางสู่ความลับแห่งดวงดาว ✨
+                แล้วคลิก "เปิดดวงชะตา" เพื่อเริ่มต้นการเดินทาง<br>
+                สู่ความลับแห่งดวงดาว ✨
             </p>
         </div>
         """, unsafe_allow_html=True)
