@@ -66,23 +66,29 @@ def generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time):
     if not api_key:
         return "Error: OpenAI API key is missing. Please provide your API key to generate a fortune."
     
+    client = None
     try:
-        # Conditionally initialize the client based on proxy environment variables
-        # This is a robust way to handle environments like Render that may inject proxy settings.
-        proxy_url = os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")
+        # --- STRATEGY 4: RADICAL ISOLATION ---
+        # Temporarily remove proxy environment variables before client initialization.
+        # This is a targeted workaround for platform environments that incorrectly
+        # inject proxy settings as keyword arguments.
         
-        if proxy_url:
-            # If a proxy is set in the environment, create an httpx client.
-            # Support both the older `proxies` parameter and the newer `proxy`
-            # parameter used by httpx.
-            try:
-                http_client = httpx.Client(proxy=proxy_url)
-            except TypeError:
-                http_client = httpx.Client(proxies=proxy_url)
-            client = OpenAI(api_key=api_key, http_client=http_client)
-        else:
-            # If no proxy is set, initialize the client normally
-            client = OpenAI(api_key=api_key)
+        saved_proxies = {
+            'https_proxy': os.environ.pop('HTTPS_PROXY', None),
+            'http_proxy': os.environ.pop('HTTP_PROXY', None)
+        }
+
+        # With the proxy environment variables gone, initialize the client.
+        # It now has no memory of the platform's proxy settings.
+        client = OpenAI(api_key=api_key)
+
+        # Restore the environment variables for good measure, although it's
+        # not strictly necessary for the remainder of this app's execution.
+        if saved_proxies['https_proxy']:
+            os.environ['HTTPS_PROXY'] = saved_proxies['https_proxy']
+        if saved_proxies['http_proxy']:
+            os.environ['HTTP_PROXY'] = saved_proxies['http_proxy']
+        # --- END OF STRATEGY ---
 
 
         # Construct a detailed prompt for the AI
@@ -112,3 +118,4 @@ def generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time):
     except Exception as e:
         # Provide a more detailed error message for easier debugging
         return f"An error occurred while communicating with the AI oracle: {type(e).__name__} - {e}"
+
