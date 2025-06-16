@@ -1,18 +1,18 @@
-# --- Improved Loading Component ---
-def show_unified_loading_process():
-    """Display unified loading process that covers the entire fortune generation."""
+# --- Optimized Loading Component ---
+def show_optimized_loading_process():
+    """Display optimized loading process that matches actual AI generation time."""
     placeholder = st.empty()
     
     steps = [
-        {"text": "🔍 วิเคราะห์วันเวลาเกิด", "duration": 1.0},
-        {"text": "🐉 คำนวณปีนักษัตรจีน", "duration": 1.0}, 
-        {"text": "🏮 คำนวณ八字และธาตุ", "duration": 1.0},
-        {"text": "🎨 กำหนดสีมงคล", "duration": 1.0},
-        {"text": "🤖 เตรียมการเชื่อมต่อ AI", "duration": 1.0},
-        {"text": "📡 ส่งข้อมูลไปยังเทพ AI", "duration": 2.0},
-        {"text": "🧠 AI กำลังวิเคราะห์ดวงชะตา", "duration": 3.0},
-        {"text": "📝 AI กำลังเขียนคำทำนาย", "duration": 5.0},
-        {"text": "✨ จัดรูปแบบผลลัพธ์", "duration": 1.0}
+        {"text": "🔍 วิเคราะห์วันเวลาเกิด", "duration": 0.8},
+        {"text": "🐉 คำนวณปีนักษัตรจีน", "duration": 0.7}, 
+        {"text": "🏮 คำนวณ八字และธาตุ", "duration": 0.8},
+        {"text": "🎨 กำหนดสีมงคล", "duration": 0.7},
+        {"text": "🤖 เชื่อมต่อกับเทพ AI", "duration": 1.5},
+        {"text": "📡 ส่งข้อมูลไปยัง AI", "duration": 2.0},
+        {"text": "🧠 AI กำลังวิเคราะห์", "duration": 4.0},
+        {"text": "📝 AI กำลังเขียนคำทำนาย", "duration": 8.0},
+        {"text": "✨ เตรียมแสดงผลลัพธ์", "duration": 0.5}
     ]
     
     import time
@@ -82,24 +82,6 @@ def show_unified_loading_process():
         
         time.sleep(step['duration'])
     
-    # Final completion message
-    with placeholder.container():
-        st.markdown("""
-        <div style="
-            text-align: center;
-            padding: 30px 20px;
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            border-radius: 20px;
-            margin: 20px 0;
-            color: white;
-            font-family: 'Sarabun', sans-serif;
-        ">
-            <h2 style="font-size: 2em; margin-bottom: 15px;">✅ การทำนายเสร็จสมบูรณ์!</h2>
-            <p style="font-size: 1.2em;">กำลังแสดงผลดวงชะตาของคุณ...</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    time.sleep(1)
     placeholder.empty()
     return True# streamlit_app.py
 # Mobile-optimized Enhanced UI version with responsive design
@@ -998,35 +980,20 @@ def main():
             # Success effects
             st.balloons()
             
-            # Show unified loading that covers everything including AI
+            # Show loading that matches actual AI generation time
             try:
-                # Start loading process in background
-                import threading
-                import time
+                # Start optimized loading process
+                show_optimized_loading_process()
                 
-                # Start loading animation
-                loading_placeholder = st.empty()
-                
-                # Function to run AI generation in background
-                def generate_fortune_async():
-                    day_name, thai_color = get_thai_fortune_details(birth_date)
-                    thai_animal, english_animal = get_chinese_fortune_details(birth_date.year)
-                    text_fortune = generate_ai_fortune(api_key, day_name, thai_color, thai_animal, birth_time)
-                    return day_name, thai_color, thai_animal, english_animal, text_fortune
-                
-                # Show comprehensive loading (covers entire process)
-                with loading_placeholder.container():
-                    show_unified_loading_process()
-                
-                # Now get the actual results (AI should be done or nearly done)
+                # Get fortune details (these are quick)
                 day_name, thai_color = get_thai_fortune_details(birth_date)
                 thai_animal, english_animal = get_chinese_fortune_details(birth_date.year)
                 
-                # Display boards first
-                display_mobile_optimized_boards(day_name, thai_color, thai_animal, english_animal, birth_time, birth_date)
-                
-                # Generate AI fortune (this should complete quickly since we've given it time)
+                # Generate AI fortune during loading (parallel processing concept)
                 text_fortune = generate_ai_fortune(api_key, day_name, thai_color, thai_animal, birth_time)
+                
+                # Display results immediately after loading
+                display_mobile_optimized_boards(day_name, thai_color, thai_animal, english_animal, birth_time, birth_date)
                 
                 # Display fortune in mobile-friendly container
                 st.markdown("""
