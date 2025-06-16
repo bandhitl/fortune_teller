@@ -796,9 +796,42 @@ def load_mobile_responsive_css():
     
     /* Hide default Streamlit date inputs on mobile */
     @media (max-width: 768px) {
-        .stDateInput, .stTimeInput {
-            display: none !important;
+        .stSelectbox > div > div {
+            background: white !important;
+            border: 2px solid #dc2626 !important;
+            border-radius: 10px !important;
+            font-size: 1.1em !important;
         }
+        
+        .stSelectbox label {
+            color: #991b1b !important;
+            font-weight: 600 !important;
+        }
+    }
+    
+    /* Streamlit selectbox styling */
+    .stSelectbox > div > div > div {
+        color: #7f1d1d !important;
+        font-family: 'Kanit', sans-serif !important;
+    }
+    
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.1);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: rgba(220, 38, 38, 0.5);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(220, 38, 38, 0.7);
     }
     
     /* Accessibility - Focus States */
@@ -1025,172 +1058,141 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-# --- Mobile-Friendly Date Input Component ---
-def show_mobile_date_input():
-    """Create a mobile-friendly date and time input interface."""
-    
-    # Get current date for defaults
-    import datetime
-    current_year = datetime.date.today().year
+# --- Mobile-Optimized Date Input ---
+def show_mobile_optimized_date_input():
+    """Create mobile-optimized date input using native HTML5 inputs."""
     
     st.markdown("""
     <div class="mobile-date-container">
-        <h4 style="text-align: center; color: #8b4513; margin-bottom: 20px; font-family: 'Kanit', sans-serif;">
+        <h4 style="text-align: center; color: #991b1b; margin-bottom: 20px; font-family: 'Kanit', sans-serif;">
             📅 ข้อมูลวันเวลาเกิด
         </h4>
-        <div id="mobile-date-inputs">
-            <div class="mobile-date-grid">
-                <div class="date-input-group">
-                    <div class="date-label">วัน</div>
-                    <select class="date-select" id="day-select">
-                    </select>
-                </div>
-                <div class="date-input-group">
-                    <div class="date-label">เดือน</div>
-                    <select class="date-select" id="month-select">
-                    </select>
-                </div>
-                <div class="date-input-group">
-                    <div class="date-label">ปี (ค.ศ.)</div>
-                    <select class="date-select" id="year-select">
-                    </select>
-                </div>
-            </div>
-            
-            <div class="time-input-container">
-                <div class="date-label">🕐 เวลาเกิด (ถ้าทราบ)</div>
-                <div class="time-grid">
-                    <div>
-                        <div class="date-label" style="margin-bottom: 5px;">ชั่วโมง</div>
-                        <select class="time-input" id="hour-select">
-                        </select>
-                    </div>
-                    <div>
-                        <div class="date-label" style="margin-bottom: 5px;">นาที</div>
-                        <select class="time-input" id="minute-select">
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-    
-    <script>
-    (function() {
-        // Thai month names
-        const thaiMonths = [
-            'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-            'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
-        ];
-        
-        // Populate day select
-        const daySelect = document.getElementById('day-select');
-        for (let i = 1; i <= 31; i++) {
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = i;
-            if (i === 8) option.selected = true; // Default to 8th
-            daySelect.appendChild(option);
-        }
-        
-        // Populate month select
-        const monthSelect = document.getElementById('month-select');
-        thaiMonths.forEach((month, index) => {
-            const option = document.createElement('option');
-            option.value = index + 1;
-            option.textContent = month;
-            if (index === 6) option.selected = true; // Default to July
-            monthSelect.appendChild(option);
-        });
-        
-        // Populate year select (1950 to current year)
-        const yearSelect = document.getElementById('year-select');
-        const currentYear = new Date().getFullYear();
-        for (let year = currentYear; year >= 1950; year--) {
-            const option = document.createElement('option');
-            option.value = year;
-            option.textContent = year + ' (' + (year + 543) + ')'; // Show both Christian and Buddhist era
-            if (year === 1980) option.selected = true; // Default to 1980
-            yearSelect.appendChild(option);
-        }
-        
-        // Populate hour select
-        const hourSelect = document.getElementById('hour-select');
-        for (let i = 0; i < 24; i++) {
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = i.toString().padStart(2, '0') + ' น.';
-            if (i === 7) option.selected = true; // Default to 7 AM
-            hourSelect.appendChild(option);
-        }
-        
-        // Populate minute select
-        const minuteSelect = document.getElementById('minute-select');
-        for (let i = 0; i < 60; i += 5) { // 5-minute intervals
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = i.toString().padStart(2, '0') + ' น.';
-            if (i === 30) option.selected = true; // Default to 30 minutes
-            minuteSelect.appendChild(option);
-        }
-        
-        // Function to get selected date and time
-        window.getMobileDateTime = function() {
-            return {
-                day: parseInt(daySelect.value),
-                month: parseInt(monthSelect.value),
-                year: parseInt(yearSelect.value),
-                hour: parseInt(hourSelect.value),
-                minute: parseInt(minuteSelect.value)
-            };
-        };
-        
-        // Update day options when month/year changes
-        function updateDays() {
-            const month = parseInt(monthSelect.value);
-            const year = parseInt(yearSelect.value);
-            const daysInMonth = new Date(year, month, 0).getDate();
-            
-            // Clear existing options
-            daySelect.innerHTML = '';
-            
-            // Add new options
-            for (let i = 1; i <= daysInMonth; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = i;
-                daySelect.appendChild(option);
-            }
-            
-            // Set default to 8th or last day if month has fewer days
-            daySelect.value = Math.min(8, daysInMonth);
-        }
-        
-        monthSelect.addEventListener('change', updateDays);
-        yearSelect.addEventListener('change', updateDays);
-        
-        // Initialize
-        updateDays();
-    })();
-    </script>
     """, unsafe_allow_html=True)
     
-    # Hidden fallback inputs for desktop
-    col1, col2 = st.columns(2)
-    with col1:
-        birth_date = st.date_input(
-            "📅 วันเกิด (Desktop):",
-            datetime.date(1980, 7, 8),
-            min_value=datetime.date(1950, 1, 1),
-            max_value=datetime.date.today()
-        )
-    with col2:
-        birth_time = st.time_input(
-            "🕐 เวลาเกิด (Desktop):",
-            datetime.time(7, 30)
-        )
+    # Desktop/Tablet: Use Streamlit components
+    # Mobile: Will be handled by the simpler fallback
     
-    return birth_date, birth_time
+    is_mobile = st.checkbox("📱 ใช้โหมดมือถือ (ถ้าเลือกยาก)", value=False)
+    
+    if is_mobile:
+        # Simple mobile-friendly inputs
+        st.markdown("### เลือกวันเกิดแบบง่าย")
+        
+        # Year selection
+        st.markdown("**🗓️ เลือกปีเกิด**")
+        years = list(range(2025, 1949, -1))
+        year_options = [f"{year} (พ.ศ. {year + 543})" for year in years]
+        year_selected = st.radio("ปีเกิด:", year_options, index=45, horizontal=True)  # Default 1980
+        year = int(year_selected.split()[0])
+        
+        # Month selection  
+        st.markdown("**📅 เลือกเดือนเกิด**")
+        thai_months = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+                      'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+        month_selected = st.radio("เดือนเกิด:", thai_months, index=6, horizontal=True)  # Default July
+        month = thai_months.index(month_selected) + 1
+        
+        # Day selection
+        st.markdown("**📆 เลือกวันเกิด**")
+        import calendar
+        max_day = calendar.monthrange(year, month)[1]
+        day_options = list(range(1, max_day + 1))
+        day = st.radio("วันเกิด:", day_options, index=min(7, max_day-1), horizontal=True)  # Default 8th
+        
+        # Time selection
+        st.markdown("**🕐 เลือกเวลาเกิด**")
+        col1, col2 = st.columns(2)
+        with col1:
+            hour = st.slider("ชั่วโมง", 0, 23, 7)
+        with col2:
+            minute = st.slider("นาที", 0, 55, 30, step=5)
+            
+    else:
+        # Standard mode for desktop/tablet
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.markdown('<p style="color: #991b1b; font-weight: 600; text-align: center;">วัน</p>', unsafe_allow_html=True)
+            day = st.selectbox("วัน", range(1, 32), index=7, label_visibility="collapsed")
+        
+        with col2:
+            st.markdown('<p style="color: #991b1b; font-weight: 600; text-align: center;">เดือน</p>', unsafe_allow_html=True)
+            thai_months = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+                          'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+            month_idx = st.selectbox("เดือน", range(len(thai_months)), 
+                                   format_func=lambda x: thai_months[x], 
+                                   index=6, label_visibility="collapsed")
+            month = month_idx + 1
+        
+        with col3:
+            st.markdown('<p style="color: #991b1b; font-weight: 600; text-align: center;">ปี</p>', unsafe_allow_html=True)
+            current_year = datetime.date.today().year
+            years = list(range(current_year, 1949, -1))
+            year_idx = st.selectbox("ปี", range(len(years)), 
+                                  format_func=lambda x: f"{years[x]} ({years[x] + 543})", 
+                                  index=years.index(1980) if 1980 in years else 0, 
+                                  label_visibility="collapsed")
+            year = years[year_idx]
+        
+        # Time input
+        st.markdown('<p style="color: #991b1b; font-weight: 600; text-align: center; margin-top: 20px;">🕐 เวลาเกิด</p>', unsafe_allow_html=True)
+        
+        time_col1, time_col2 = st.columns(2)
+        
+        with time_col1:
+            st.markdown('<p style="color: #991b1b; font-weight: 600; text-align: center;">ชั่วโมง</p>', unsafe_allow_html=True)
+            hour = st.selectbox("ชั่วโมง", range(24), 
+                              format_func=lambda x: f"{x:02d} น.", 
+                              index=7, label_visibility="collapsed")
+        
+        with time_col2:
+            st.markdown('<p style="color: #991b1b; font-weight: 600; text-align: center;">นาที</p>', unsafe_allow_html=True)
+            minutes = list(range(0, 60, 5))
+            minute_idx = st.selectbox("นาที", range(len(minutes)), 
+                                    format_func=lambda x: f"{minutes[x]:02d} น.", 
+                                    index=6, label_visibility="collapsed")
+            minute = minutes[minute_idx]
+    
+    # Create date and time objects
+    try:
+        # Validate the date
+        import calendar
+        max_day = calendar.monthrange(year, month)[1]
+        if day > max_day:
+            day = max_day
+            
+        birth_date = datetime.date(year, month, day)
+        birth_time = datetime.time(hour, minute)
+        
+        # Display confirmation
+        thai_months = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+                      'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+        
+        # Show confirmation
+        if is_mobile:
+            st.success(f"✅ **วันเกิดที่เลือก**: {day} {thai_months[month-1]} พ.ศ. {year + 543} เวลา {hour:02d}:{minute:02d} น.")
+        else:
+            st.markdown(f"""
+            <div style="
+                background: rgba(255,255,255,0.9); 
+                padding: 15px; 
+                border-radius: 10px; 
+                text-align: center; 
+                margin-top: 15px;
+                border: 2px solid #dc2626;
+            ">
+                <p style="color: #991b1b; font-weight: 600; margin: 0;">
+                    📅 วันเกิดที่เลือก: {day} {thai_months[month-1]} {year + 543} เวลา {hour:02d}:{minute:02d} น.
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        return birth_date, birth_time
+        
+    except ValueError as e:
+        st.error(f"❌ วันที่ไม่ถูกต้อง: {e}")
+        return datetime.date(1980, 7, 8), datetime.time(7, 30)
 
     # Get API key
     api_key = os.environ.get("OPENAI_API_KEY")
