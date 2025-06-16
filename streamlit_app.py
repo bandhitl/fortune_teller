@@ -1,11 +1,10 @@
 # streamlit_app.py
-# Complete AI Astrology App with Real AI Integration
+# Complete working AI Astrology App
 
 import streamlit as st
 import datetime
 import os
 import openai
-import calendar
 
 # Page config
 st.set_page_config(
@@ -14,33 +13,23 @@ st.set_page_config(
     layout="wide"
 )
 
-# Thai Fortune Functions
+# Functions
 def get_thai_fortune_details(birth_date):
-    """Get Thai astrology details based on birth date."""
     days = ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์', 'อาทิตย์']
     colors = ['เหลือง', 'ชมพู', 'เขียว', 'ส้ม', 'น้ำเงิน', 'ม่วง', 'แดง']
-    
     day_of_week = birth_date.weekday()
-    day_name = days[day_of_week]
-    color = colors[day_of_week]
-    
-    return day_name, color
+    return days[day_of_week], colors[day_of_week]
 
 def get_chinese_fortune_details(birth_year):
-    """Get Chinese zodiac details."""
     animals = [
         ('หนู', 'Rat'), ('วัว', 'Ox'), ('เสือ', 'Tiger'), ('กระต่าย', 'Rabbit'),
         ('มังกร', 'Dragon'), ('งู', 'Snake'), ('ม้า', 'Horse'), ('แพะ', 'Goat'),
         ('ลิง', 'Monkey'), ('ไก่', 'Rooster'), ('หมา', 'Dog'), ('หมู', 'Pig')
     ]
-    
     index = (birth_year - 1900) % 12
-    thai_animal, english_animal = animals[index]
-    
-    return thai_animal, english_animal
+    return animals[index]
 
 def get_bazi_elements(birth_date, birth_time):
-    """Get simplified BaZi elements."""
     heavenly_stems = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
     earthly_branches = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
     
@@ -78,17 +67,14 @@ def get_bazi_elements(birth_date, birth_time):
     }
 
 def generate_ai_fortune(birth_date, birth_time, day_name, thai_color, thai_animal):
-    """Generate AI fortune using OpenAI."""
     api_key = os.environ.get("OPENAI_API_KEY")
     
     if not api_key:
         return "❌ ไม่พบ OpenAI API Key ในระบบ กรุณาตั้งค่า Environment Variable"
     
     try:
-        # Use older openai syntax that works
         openai.api_key = api_key
         
-        # Calculate age
         today = datetime.date.today()
         age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
         
@@ -117,7 +103,7 @@ def generate_ai_fortune(birth_date, birth_time, day_name, thai_color, thai_anima
         """
         
         response = openai.ChatCompletion.create(
-            model="gpt-4o",  # Use GPT-4o as requested
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "คุณเป็นหมอดูผู้เชี่ยวชาญด้านโหราศาสตร์ไทยและจีน มีประสบการณ์กว่า 30 ปี ให้คำทำนายที่แม่นยำและให้กำลังใจ"},
                 {"role": "user", "content": prompt}
@@ -131,7 +117,7 @@ def generate_ai_fortune(birth_date, birth_time, day_name, thai_color, thai_anima
     except Exception as e:
         return f"❌ เกิดข้อผิดพลาดในการเชื่อมต่อ AI: {str(e)}"
 
-# CSS Styling
+# CSS
 st.markdown("""
 <style>
 body {
@@ -241,31 +227,28 @@ col1, col2 = st.columns(2)
 
 with col1:
     birth_date = st.date_input(
-        "📅 วัน/เดือน/ปีเกิด:",
+        "📅 วัน/เดือน/ปีเกิด:", 
         datetime.date(1990, 1, 1),
-        min_value=datetime.date(1950, 1, 1),
+        min_value=datetime.date(1950, 1, 1), 
         max_value=datetime.date.today()
     )
 
 with col2:
     birth_time = st.time_input(
-        "🕐 เวลาเกิด:",
+        "🕐 เวลาเกิด:", 
         datetime.time(12, 0)
     )
 
-# Main fortune telling button
+# Button
 if st.button("🔮 เปิดดวงชะตา", use_container_width=True, type="primary"):
     st.balloons()
     
-    # Calculate astrology data
     day_name, thai_color = get_thai_fortune_details(birth_date)
     thai_animal, english_animal = get_chinese_fortune_details(birth_date.year)
     bazi = get_bazi_elements(birth_date, birth_time)
     
-    # Display astrology boards
     col_left, col_right = st.columns(2)
     
-    # Thai astrology board
     with col_left:
         zodiac_emojis = {
             "Rat": "🐭", "Ox": "🐮", "Tiger": "🐯", "Rabbit": "🐰", "Dragon": "🐲", 
@@ -309,7 +292,6 @@ if st.button("🔮 เปิดดวงชะตา", use_container_width=True,
         </div>
         """, unsafe_allow_html=True)
     
-    # Chinese BaZi board
     with col_right:
         st.markdown(f"""
         <div class="board">
@@ -349,17 +331,12 @@ if st.button("🔮 เปิดดวงชะตา", use_container_width=True,
         </div>
         """, unsafe_allow_html=True)
     
-    # Generate AI fortune with proper loading
     st.markdown("### 📜 คำพยากรณ์ดวงชะตา")
     
-    # Show comprehensive loading that waits for actual AI response
-    with st.spinner("🤖 AI กำลังวิเคราะห์ดวงชะตาของคุณ กรุณารอสักครู่... (อาจใช้เวลา 30-60 วินาที)"):
-        # Generate AI fortune - spinner will stay until this actually completes
+    with st.spinner("🤖 AI กำลังวิเคราะห์ดวงชะตาของคุณ กรุณารอสักครู่..."):
         fortune_text = generate_ai_fortune(birth_date, birth_time, day_name, thai_color, thai_animal)
-
-    # Only show result after AI is completely done
+    
     if fortune_text:
-        # Display fortune
         st.markdown(f"""
         <div style="
             background: rgba(255,255,255,0.95);
@@ -374,13 +351,10 @@ if st.button("🔮 เปิดดวงชะตา", use_container_width=True,
             {fortune_text}
         </div>
         """, unsafe_allow_html=True)
-    else:
-        st.error("❌ ไม่สามารถสร้างคำทำนายได้ กรุณาลองใหม่")
 
-# Footer
 st.markdown("---")
 st.markdown(
     '<p style="text-align: center; color: rgba(255,255,255,0.7);">'
-    'พัฒนาโดย AI โหราจารย์ | ใช้ OpenAI GPT-4</p>', 
+    'พัฒนาโดย AI โหราจารย์ | ใช้ OpenAI GPT-4o</p>', 
     unsafe_allow_html=True
 )
