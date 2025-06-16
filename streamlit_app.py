@@ -5,7 +5,11 @@ import datetime
 
 import streamlit as st  # type: ignore
 
-from fortune import get_chinese_fortune, get_thai_fortune
+from fortune import (
+    generate_fortune_text,
+    get_chinese_fortune,
+    get_thai_fortune,
+)
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -25,15 +29,21 @@ birth_date = st.date_input(
     min_value=datetime.date(1900, 1, 1),
     max_value=datetime.date.today(),
 )
+birth_time = st.time_input(
+    "Enter your time of birth:",
+    datetime.time(12, 0),
+)
 
 # --- Fortune Calculation and Display ---
 if st.button("✨ Tell My Fortune"):
     if birth_date:
         # Get Thai Fortune
-        day_name, color, thai_desc = get_thai_fortune(birth_date)
+        day_name, color, thai_desc, thai_pred = get_thai_fortune(birth_date)
 
         # Get Chinese Fortune
-        animal, chinese_desc = get_chinese_fortune(birth_date.year)
+        animal, chinese_desc, chinese_pred = get_chinese_fortune(birth_date.year)
+
+        combined = generate_fortune_text(birth_date, birth_time)
 
         st.balloons()
         st.success("Your fortune has been revealed!")
@@ -47,6 +57,8 @@ if st.button("✨ Tell My Fortune"):
         with col2:
             st.write("**Personality Trait:**")
             st.info(thai_desc)
+            st.write("**Prediction:**")
+            st.success(thai_pred)
 
         st.subheader("🇨🇳 Your Chinese Fortune (from Year of Birth)")
         col3, col4 = st.columns([1, 4])
@@ -55,6 +67,11 @@ if st.button("✨ Tell My Fortune"):
         with col4:
             st.write("**Personality Trait:**")
             st.info(chinese_desc)
+            st.write("**Prediction:**")
+            st.success(chinese_pred)
+
+        st.subheader("🔮 Combined Prediction")
+        st.write(combined)
     else:
         st.error("Please enter a valid date.")
 
