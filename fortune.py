@@ -67,16 +67,20 @@ def generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time):
         return "Error: OpenAI API key is missing. Please provide your API key to generate a fortune."
     
     try:
-        # Explicitly configure the HTTP client. httpx automatically respects
-        # proxy environment variables (HTTP_PROXY, HTTPS_PROXY), which is the
-        # recommended way to handle proxies in production environments like Render.
-        # This can prevent conflicts that cause the 'proxies' keyword error.
-        http_client = httpx.Client(proxies=os.environ.get("HTTPS_PROXY"))
+        # Conditionally initialize the client based on proxy environment variables
+        # This is a robust way to handle environments like Render that may inject proxy settings.
+        proxy_url = os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")
+        
+        if proxy_url:
+            # If a proxy is set in the environment, create an httpx client with it
+            http_client = httpx.Client(proxies=proxy_url)
+            client = OpenAI(api_key=api_key, http_client=http_client)
+        else:
+            # If no proxy is set, initialize the client normally
+            client = OpenAI(api_key=api_key)
 
-        # Initialize the OpenAI client with the custom http_client
-        client = OpenAI(api_key=api_key, http_client=http_client)
 
-        # Construct a detailed prompt for the AI, now including birth time (and corrected typo)
+        # Construct a detailed prompt for the AI
         prompt = (
             f"Act as an expert astrologer combining Thai and Chinese traditions. "
             f"A person was born on a {day_name} at {birth_time.strftime('%H:%M')}. Their lucky color is {thai_color} and their Chinese Zodiac animal is the {animal_name}. "
@@ -97,7 +101,7 @@ def generate_ai_fortune(api_key, day_name, thai_color, animal_name, birth_time):
                     "content": prompt,
                 }
             ],
-            model="gpt-4-turbo", # Using a more advanced model for better results
+            model="gpt-4-turbo",
         )
         return chat_completion.choices[0].message.content
     except Exception as e:
